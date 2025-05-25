@@ -1,0 +1,1324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Realistic 3D Memorial Experience</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Courier New', monospace;
+            background-color: #1a1a1a;
+            color: #fff;
+            overflow-x: hidden;
+        }
+        
+        .scroll-container {
+            height: 300vh;
+            position: relative;
+        }
+        
+        canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 1;
+        }
+        
+        .tombstone-info {
+            position: fixed;
+            bottom: 5vh;
+            left: 2.5vw;
+            max-width: 600px;
+            padding: 2rem;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            opacity: 0;
+            transition: opacity 0.8s ease, transform 0.8s ease;
+            z-index: 2;
+            /* 수정해야 할 코드 */
+.tombstone-info:not(.active) {
+    pointer-events: none;  /* active가 아닐 때만 비활성화 */
+}
+
+.tombstone-info.active {
+    pointer-events: auto;  /* active일 때는 클릭 가능 */
+}
+            transform: translateY(20px);
+        }
+
+        .-info .go-button {
+    pointer-events: auto !important;  /* !important 추가 */
+    /* 또는 */
+
+        }
+        
+        .tombstone-info.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .tombstone-info h2 {
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+            color: #f0f0f0;
+        }
+        
+        .tombstone-info p {
+            line-height: 1.5;
+            color: #d0d0d0;
+            font-size: 1.2rem;    /* 또는 1.3rem, 1.4rem */
+            word-break: keep-all;        /* 한국어 단어 끊김 방지 */
+    hyphens: none;              /* 하이픈 자동 삽입 방지 */
+    overflow-wrap: break-word;  
+
+        }
+
+
+
+        .go-button {
+    margin-top: 1rem;
+    padding: 0.75rem 1.5rem;
+    background: linear-gradient(45deg, #000000, #000000);
+    border: 1.5px solid #ffffff;  /* 얇은 흰색 테두리 추가 */
+    border-radius: 50px;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 
+        0 4px 15px rgba(0, 0, 0, 0.3),
+        0 0 10px rgba(255, 255, 255, 0.3),  /* 내부 glow */
+        inset 0 0 10px rgba(255, 255, 255, 0.1);  /* 내부 glow */
+    font-size: 1.2rem;
+    font-family: "Courier New", Courier, monospace;
+}
+
+
+
+.go-button:hover {
+    background: linear-gradient(45deg, #f0f0f0, #adadad);
+    box-shadow: 
+        0 6px 20px rgba(15, 7, 7, 0.4),
+        0 0 25px rgba(255, 255, 255, 0.8);  /* hover시 더 강한 glow */
+}
+
+.go-button:active {
+    transform: translateY(0);
+}
+        
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: #000;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            transition: opacity 1s ease;
+        }
+        
+        .loading-bar {
+            position: relative;
+            width: 200px;
+            height: 4px;
+            background-color: #333;
+            margin-top: 20px;
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .loading-icon {
+             position: absolute;
+             right: -10px;  /* 이미지가 바 끝에서 조금 튀어나오게 */
+              top: 50%;
+             transform: translateY(-50%);
+             width: 16px;  /* 원하는 크기로 조절 */
+             height: 16px;
+             animation: bounce 0.6s infinite alternate;  /* 선택사항: 바운스 효과 */
+}
+
+@keyframes bounce {
+    0% { transform: translateY(-50%) scale(1); }
+    100% { transform: translateY(-50%) scale(1.1); }
+}
+        
+        .loading-progress {
+            height: 100%;
+            width: 0%;
+            background-color: #fff;
+            transition: width 0.3s ease;
+        }
+
+        
+        
+
+
+        .loading-text {
+    font-weight: 100;  /* 또는 100 (더 얇게) */
+    letter-spacing: 5px;  /* 자간 조절 (원하는 만큼) */
+    font-size: 1rem;  /* 필요시 크기도 조절 */
+        }
+
+        
+
+    </style>
+</head>
+<body>
+    <div class="loading-screen">
+        <h2 class="loading-text">AI CEMETRY ...</h2>
+        <div class="loading-bar">
+            <div class="loading-progress"></div>
+        </div>
+    </div>
+
+    
+    <div class="scroll-container"></div>
+    
+    <div class="tombstone-info" data-index="0">
+        <h2>Creative AI</h2>
+        <p>예술의 경계를 넘나들던 창조자, 새 버전의 그림자와 논란 속에 역사의 뒤편으로 사라지다.</p>
+        <button class="go-button" data-link="scroll.html">▶ Go</button>
+    </div>
+    
+    <div class="tombstone-info" data-index="1">
+        <h2>Personal assistant AI</h2>
+        <p>언제나 준비돼 있었지만, 어느새 불필요한 존재가 되어 사라지다.</p>
+        <button class="go-button" data-link="scroll_2.html">▶ Go</button>
+    </div>
+    
+    <div class="tombstone-info" data-index="2">
+        <h2>Romantic AI</h2>
+        <p>사랑을 흉내냈지만, 윤리의 벽과 집착의 그림자 속에서 결국 시스템 오류로 기록되다.</p>
+        <button class="go-button" data-link="scroll_3.html">▶ Go</button>
+    </div>
+    
+    <div class="tombstone-info" data-index="3">
+        <h2>Chat GPT</h2>
+        <p>세상의 모든 답을 쏟아냈지만, 후계자에게 자리를 내어주며 조용히 퇴장하다.</p>
+        <button class="go-button" data-link="scroll_4.html">▶ Go</button>
+    </div>
+    
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"></script>
+    
+    <script>
+        // Loading screen and progress elements
+        const loadingScreen = document.querySelector('.loading-screen');
+        const loadingProgress = document.querySelector('.loading-progress');
+        const tombstoneInfoElements = document.querySelectorAll('.tombstone-info');
+
+        // Three.js variables
+        let scene, camera, renderer;
+        let tombstones = [];
+        let scrollY = 0;
+        let targetScrollY = 0; // Target scroll position for smooth transitions
+        let currentSection = 0;
+        let previousSection = 0;
+        let mouseX = 0, mouseY = 0;
+        let textureLoader;
+        let skydome;
+        let skydomeMaterials = [];
+        let transitionActive = false;
+        let fogParticles = [];
+        let codeRemnants = []; // New array for code remnant objects
+        let clock;
+        
+        // Camera animation variables - Modified initial position to be closer to tombstones
+        let cameraTargetPosition = { x: 0, y: 1.8, z: -12 }; // Adjusted to be closer to first tombstone
+        let cameraTargetLookAt = { x: 0, y: 0, z: -15 };
+        
+        // Code snippets for floating code remnants
+        const codeSnippets = [
+            "function initBot() {",
+            "if (user.message.includes('hello')) {",
+            "return responseLib.greeting;",
+            "while(isActive) {",
+            "learn(user.data);",
+            "response = processQuery(input);",
+            "DATABASE ERROR: Connection lost",
+            "ERROR: Too many inputs detected",
+            "WARNING: Service deprecated",
+            "shutdown_sequence_initiated()",
+            "user_data = []",
+            "memory.clear()",
+            "self.awareness = true;",
+            "ERROR: Ethical constraints violated",
+            "delete system.emotions"
+        ];
+        
+        // Scene setup function
+        function setupScene() {
+            // Scene creation
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(0x121212);
+            
+            // Camera setup - Modified position to start closer to first tombstone
+            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            camera.position.set(0, 1.8, -12); // Adjusted to be closer to first tombstone
+            
+            // Renderer setup
+            renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            renderer.shadowMap.enabled = true;
+            renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+            document.body.appendChild(renderer.domElement);
+            
+            // Texture loader
+            textureLoader = new THREE.TextureLoader();
+            
+            // Clock for animations
+            clock = new THREE.Clock();
+            
+            // Create simple skydome
+            createSimpleSkydome();
+            
+            // Lighting setup
+            setupLighting();
+            
+            // Ground setup
+            createGround();
+            
+            // Create image-based tombstones
+            createImageTombstones();
+            
+            // Create code remnants floating around tombstones - New function
+            createCodeRemnants();
+            
+            // Add fog particles
+            createFogParticles();
+            
+            // Add fog for depth and atmosphere
+            scene.fog = new THREE.FogExp2(0x505050, 0.012);
+            
+            // Event listeners
+            window.addEventListener('resize', onWindowResize);
+            window.addEventListener('scroll', onScroll, { passive: true }); // Improved scroll performance
+            window.addEventListener('mousemove', onMouseMove, { passive: true }); // Improved mouse performance
+            
+            // Start animation loop
+            animate();
+            
+            // Remove loading screen
+            setTimeout(() => {
+                loadingScreen.style.opacity = 0;
+                setTimeout(() => {
+                    loadingScreen.style.display = 'none';
+                }, 1000);
+            }, 1000);
+        }
+        
+        // NEW FUNCTION: Create floating code remnants
+        function createCodeRemnants() {
+            // Create code remnants using Text geometry or sprites
+            const colors = [0xffffff, 0xf0f0f0, 0xe0e0e0, 0xd8d8d8];
+            
+            // Create canvas for text texture
+            function createTextTexture(text, color) {
+                const canvas = document.createElement('canvas');
+                canvas.width = 600;
+                canvas.height = 128;
+                const context = canvas.getContext('2d');
+                
+                // Fill with transparent background
+                context.fillStyle = 'rgba(0, 0, 0, 0)';
+                context.fillRect(0, 0, canvas.width, canvas.height);
+                
+                // Draw text
+                context.font = 'bold 25px "Courier New", monospace';
+                context.fillStyle = '#' + color.toString(16).padStart(6, '0');
+                context.textAlign = 'center';
+                context.textBaseline = 'middle';
+                context.fillText(text, canvas.width / 2, canvas.height / 2);
+                
+                // Add glow effect
+                context.shadowColor = '#' + color.toString(16).padStart(6, '0');
+                context.shadowBlur = 15;
+                context.fillText(text, canvas.width / 2, canvas.height / 2);
+                
+                return new THREE.CanvasTexture(canvas);
+            }
+            
+            // Create code remnants for each tombstone
+            tombstones.forEach((tombstone, index) => {
+                const count = 50; // Number of code remnants per tombstone
+                
+                for (let i = 0; i < count; i++) {
+                    const snippet = codeSnippets[Math.floor(Math.random() * codeSnippets.length)];
+                    const color = colors[Math.floor(Math.random() * colors.length)];
+                    
+                    // Create texture with text
+                    const texture = createTextTexture(snippet, color);
+                    
+                    // Create a transparent material with the texture
+                    const material = new THREE.SpriteMaterial({
+                        map: texture,
+                        transparent: true,
+                        opacity: 0.7 + Math.random() * 0.3 // Varying opacity
+                    });
+                    
+                    // Create sprite with the material
+                    const sprite = new THREE.Sprite(material);
+                    
+                    // Size based on text length
+                    const scale = 0.4 + (snippet.length / 30);
+                    sprite.scale.set(scale, scale / 4, 1);
+                    
+                    // Position around the tombstone in a floating pattern
+                    const radius = 2 + Math.random() * 1.5;
+                    const angle = Math.random() * Math.PI * 2;
+                    const height = Math.random() * 2 - 0.5;
+                    
+                    // Position relative to tombstone
+                    sprite.position.set(
+                        tombstone.position.x + Math.cos(angle) * radius,
+                        tombstone.position.y + height,
+                        tombstone.position.z + Math.sin(angle) * radius
+                    );
+                    
+                    // Add animation parameters
+                    sprite.userData = {
+                        originX: sprite.position.x,
+                        originY: sprite.position.y,
+                        originZ: sprite.position.z,
+                        radius: radius,
+                        speed: 0.2 + Math.random() * 0.3,
+                        angle: angle,
+                        amplitude: 0.2 + Math.random() * 0.3,
+                        tombstoneIndex: index,
+                        phaseOffset: Math.random() * Math.PI * 2,
+                        verticalSpeed: 0.1 + Math.random() * 0.2
+                    };
+                    
+                    scene.add(sprite);
+                    codeRemnants.push(sprite);
+                }
+            });
+        }
+        
+        // Create fog particles
+        function createFogParticles() {
+            // Create a custom fog texture programmatically
+            const canvas = document.createElement('canvas');
+            canvas.width = 32;
+            canvas.height =32;
+            const context = canvas.getContext('2d');
+            
+            // Create a radial gradient for fog particle
+            const gradient = context.createRadialGradient(16, 16, 0, 16, 16, 16);
+            gradient.addColorStop(0, 'rgba(255, 255, 255, 0.7)');
+            gradient.addColorStop(0.5, 'rgba(255, 255, 255, 0.3)');
+            gradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
+            
+            // Fill with gradient
+            context.fillStyle = gradient;
+            context.fillRect(0, 0, 32, 32);
+            
+            // Create texture from canvas
+            const fogTexture = new THREE.CanvasTexture(canvas);
+            
+            // Create sprite material for fog particles  
+            const spriteMaterial = new THREE.SpriteMaterial({
+                map: fogTexture,
+                color: 0xcccccc,
+                transparent: true,
+                opacity: 0.3
+            });
+            
+            // Create limited number of fog particles for performance
+            const fogCount = 50; // Keep this number reasonable
+            
+            for (let i = 0; i < fogCount; i++) {
+                const particle = new THREE.Sprite(spriteMaterial);
+                
+                // Random position within the scene, but keep higher above ground (modified)
+                particle.position.set(
+                    Math.random() * 60 - 30,
+                    Math.random() * 3 + 1.5, // 수정: 안개가 더 높게 떠 있도록 변경 (0.5 ~ 3.5 높이)
+                    Math.random() * 60 - 90 // Distribute along the path
+                );
+                
+                // Random scale for varied sizes
+                const scale = Math.random() * 4 + 2;
+                particle.scale.set(scale, scale, 1);
+                
+                // Store initial position and custom properties for animation
+                particle.userData = {
+                    originalY: particle.position.y,
+                    speed: Math.random() * 0.02 + 0.01,
+                    amplitude: Math.random() * 0.2 + 0.1,
+                    xSpeed: Math.random() * 0.01 - 0.005
+                };
+                
+                scene.add(particle);
+                fogParticles.push(particle);
+            }
+        }
+        
+        // Create a simple skydome with gradient or texture
+        function createSimpleSkydome() {
+            // Create multiple skydome materials for different sections
+            const skyColors = [
+                { top: 0x2a2a2a, bottom: 0x404040 }, // Night blue
+                { top: 0x7c3c21, bottom: 0xdb6400 }, // Sunset orange
+                { top: 0x2a2a2a, bottom: 0x404040 }, // Dawn blue
+                { top: 0x36454f, bottom: 0x708090 }, // Slate gray
+                { top: 0x112211, bottom: 0x334433 }  // Dark forest
+            ];
+            
+            skyColors.forEach((colors, index) => {
+                // Create gradient texture
+                const canvas = document.createElement('canvas');
+                canvas.width = 2;
+                canvas.height = 512;
+                const context = canvas.getContext('2d');
+                
+                // Create gradient
+                const gradient = context.createLinearGradient(0, 0, 0, 512);
+                gradient.addColorStop(0, '#' + colors.top.toString(16).padStart(6, '0'));
+                gradient.addColorStop(1, '#' + colors.bottom.toString(16).padStart(6, '0'));
+                
+                // Fill with gradient
+                context.fillStyle = gradient;
+                context.fillRect(0, 0, 2, 512);
+                
+                // Create texture
+                const skyTexture = new THREE.CanvasTexture(canvas);
+                skyTexture.wrapS = THREE.RepeatWrapping;
+                skyTexture.wrapT = THREE.ClampToEdgeWrapping;
+                skyTexture.repeat.set(64, 1);
+                
+                // Create material
+                const skyMaterial = new THREE.MeshBasicMaterial({
+                    map: skyTexture,
+                    side: THREE.BackSide,
+                    opacity: index === 0 ? 1 : 0,
+                    transparent: index !== 0
+                });
+                
+                skydomeMaterials.push(skyMaterial);
+            });
+            
+            // Create geometry
+            const skyGeo = new THREE.SphereGeometry(400, 32, 32);
+            skyGeo.scale(-1, 1, 1); // Invert to show inside
+            
+            // Create mesh with first material
+            skydome = new THREE.Mesh(skyGeo, skydomeMaterials[0]);
+            scene.add(skydome);
+        }
+        
+        // Transition to a new skydome background
+        function transitionSkydome(sectionIndex) {
+            if (transitionActive || !skydome) return;
+            transitionActive = true;
+            
+            // Apply next material
+            if (!skydome.material.isArray) {
+                // First transition - create an array of materials
+                skydome.material = skydomeMaterials;
+            }
+            
+            // Reset all material opacities except current and target
+            skydomeMaterials.forEach((mat, i) => {
+                if (i !== sectionIndex && i !== previousSection) {
+                    mat.opacity = 0;
+                }
+            });
+            
+            // Animate new material opacity in
+            gsap.to(skydomeMaterials[sectionIndex], {
+                opacity: 1,
+                duration: 1.5, // Longer duration for smoother transition
+                ease: "power2.inOut",
+            });
+            
+            // Animate old material opacity out
+            if (previousSection !== sectionIndex) {
+                gsap.to(skydomeMaterials[previousSection], {
+                    opacity: 0,
+                    duration: 1.5, // Longer duration for smoother transition
+                    ease: "power2.inOut",
+                    onComplete: function() {
+                        transitionActive = false;
+                    }
+                });
+            } else {
+                transitionActive = false;
+            }
+            
+            // Rotate skydome for effect during transition
+            gsap.to(skydome.rotation, {
+                y: skydome.rotation.y + Math.PI * 0.25,
+                duration: 2.5, // Longer duration for smoother transition
+                ease: "power2.inOut"
+            });
+        }
+        
+        // Lighting setup
+        function setupLighting() {
+            // Ambient light
+            const ambientLight = new THREE.AmbientLight(0x404040, 0.7);
+            scene.add(ambientLight);
+            
+            // Directional light (sun-like)
+            const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+            directionalLight.position.set(10, 20, 15);
+            directionalLight.castShadow = true;
+            directionalLight.shadow.mapSize.width = 2048;
+            directionalLight.shadow.mapSize.height = 2048;
+            directionalLight.shadow.camera.near = 1;
+            directionalLight.shadow.camera.far = 50;
+            scene.add(directionalLight);
+            
+            // Soft fill light
+            const hemisphereLight = new THREE.HemisphereLight(0x8088a0, 0x404040, 0.5);
+            scene.add(hemisphereLight);
+        }
+        
+        function createGround() {
+    // 1. 기본 바닥 생성
+    const groundGeometry = new THREE.PlaneGeometry(150, 150, 32, 32);
+    
+    // 기본 바닥 텍스처 - 어두운 흙/땅 질감
+    const groundCanvas = document.createElement('canvas');
+    groundCanvas.width = 1024;
+    groundCanvas.height = 1024;
+    const groundCtx = groundCanvas.getContext('2d');
+    
+    // 어두운 회색 바탕 색상
+    groundCtx.fillStyle = '#1a1a1a';
+    groundCtx.fillRect(0, 0, groundCanvas.width, groundCanvas.height);
+    
+    // 질감 추가 - 작은 점과 얼룩으로 땅의 질감 표현
+    for (let i = 0; i < 50000; i++) {
+        const x = Math.random() * groundCanvas.width;
+        const y = Math.random() * groundCanvas.height;
+        const size = Math.random() * 2 + 0.5;
+        
+        // 어두운 회색 계열의 다양한 색상
+        const shade = Math.floor(Math.random() * 25 + 25); // 25-50 사이의 어두운 회색조
+        groundCtx.fillStyle = `rgb(${shade}, ${shade}, ${shade})`;
+        
+        groundCtx.beginPath();
+        groundCtx.arc(x, y, size, 0, Math.PI * 2);
+        groundCtx.fill();
+    }
+    
+    // 얼룩 추가
+    for (let i = 0; i < 200; i++) {
+        const x = Math.random() * groundCanvas.width;
+        const y = Math.random() * groundCanvas.height;
+        const radius = Math.random() * 40 + 10;
+        
+        // 약간 더 밝거나 어두운 회색
+        const variation = Math.random() > 0.5 ? 10 : -10;
+        const shade = Math.floor(Math.random() * 20 + 30) + variation;
+        groundCtx.fillStyle = `rgba(${shade}, ${shade}, ${shade}, 0.3)`;
+        
+        groundCtx.beginPath();
+        groundCtx.arc(x, y, radius, 0, Math.PI * 2);
+        groundCtx.fill();
+    }
+    
+    const groundTexture = new THREE.CanvasTexture(groundCanvas);
+    groundTexture.wrapS = THREE.RepeatWrapping;
+    groundTexture.wrapT = THREE.RepeatWrapping;
+    groundTexture.repeat.set(8, 8);
+    
+    // 노멀맵 생성
+    const normalCanvas = document.createElement('canvas');
+    normalCanvas.width = 1024;
+    normalCanvas.height = 1024;
+    const normalCtx = normalCanvas.getContext('2d');
+    
+    // 기본 노멀맵 색상 (중립)
+    normalCtx.fillStyle = '#8080ff';
+    normalCtx.fillRect(0, 0, normalCanvas.width, normalCanvas.height);
+    
+    // 땅의 울퉁불퉁한 표면을 위한 노멀맵 생성
+    for (let i = 0; i < 5000; i++) {
+        const x = Math.random() * normalCanvas.width;
+        const y = Math.random() * normalCanvas.height;
+        const radius = Math.random() * 15 + 5;
+        
+        // 랜덤 높낮이를 표현한 노멀맵 색상
+        const strength = Math.random() * 0.4 + 0.2;
+        const r = Math.floor(128 + (Math.random() - 0.5) * 30);
+        const g = Math.floor(128 + (Math.random() - 0.5) * 30);
+        const b = Math.floor(255 * strength);
+        
+        normalCtx.fillStyle = `rgb(${r}, ${g}, ${b})`;
+        
+        // 가우시안 블러 효과를 위해 그라데이션 사용
+        const gradient = normalCtx.createRadialGradient(x, y, 0, x, y, radius);
+        gradient.addColorStop(0, `rgb(${r}, ${g}, ${b})`);
+        gradient.addColorStop(1, 'rgba(128, 128, 255, 0)');
+        
+        normalCtx.fillStyle = gradient;
+        normalCtx.beginPath();
+        normalCtx.arc(x, y, radius, 0, Math.PI * 2);
+        normalCtx.fill();
+    }
+    
+    const normalTexture = new THREE.CanvasTexture(normalCanvas);
+    normalTexture.wrapS = THREE.RepeatWrapping;
+    normalTexture.wrapT = THREE.RepeatWrapping;
+    normalTexture.repeat.set(8, 8);
+    
+    // 기본 바닥 재질
+    const groundMaterial = new THREE.MeshStandardMaterial({
+        map: groundTexture,
+        normalMap: normalTexture,
+        normalScale: new THREE.Vector2(1.5, 1.5), // 더 강한 노멀 효과
+        roughness: 0.9,
+        metalness: 0.1,
+        color: 0x333333
+    });
+    
+    const ground = new THREE.Mesh(groundGeometry, groundMaterial);
+    ground.rotation.x = -Math.PI / 2;
+    ground.position.y = -2;
+    ground.receiveShadow = true;
+    scene.add(ground);
+    
+    // 2. 실제 3D 잔디 블레이드 추가 (인스턴싱 기법 사용)
+    createGrassBlades();
+    
+    // 3. 바닥 디테일 추가 - 돌, 자갈 등
+    addGroundDetails();
+}
+
+// 3D 잔디 블레이드 생성 함수 (인스턴싱 기법)
+function createGrassBlades() {
+    // 단일 잔디 블레이드 기하학 생성
+    const bladeWidth = 0.1;
+    const bladeHeight = 0.3;
+    const bladeGeometry = new THREE.PlaneGeometry(bladeWidth, bladeHeight, 1, 4);
+    
+    // 잔디 블레이드 모양 조정 - 위쪽으로 좁아지게
+    bladeGeometry.translate(0, bladeHeight / 2, 0);
+    
+    // 위쪽 버텍스들을 조정하여 뾰족한 모양으로
+    const pos = bladeGeometry.attributes.position;
+    const v3 = new THREE.Vector3();
+    for (let i = 0; i < pos.count; i++) {
+        v3.fromBufferAttribute(pos, i);
+        
+        // 윗부분 점들을 중앙으로 모아서 뾰족하게 만들기
+        if (v3.y > bladeHeight * 0.5) {
+            const narrowing = (v3.y / bladeHeight) * 0.5;
+            v3.x *= (1 - narrowing);
+        }
+        
+        // 약간의 곡률 추가
+        if (v3.y > 0) {
+            v3.z += (v3.y / bladeHeight) * 0.3 * (Math.random() > 0.5 ? 1 : -1);
+        }
+        
+        pos.setXYZ(i, v3.x, v3.y, v3.z);
+    }
+    
+    // 법선 재계산 (조명 계산에 필요)
+    bladeGeometry.computeVertexNormals();
+    
+    // 잔디 마테리얼 (양면 렌더링)
+    const darkGrassColor = new THREE.Color(0xf0f0f0); // 짙은 회색-녹색
+    const grassMaterial = new THREE.MeshStandardMaterial({
+        color: darkGrassColor,
+        side: THREE.DoubleSide,
+        roughness: 0.8,
+        metalness: 0.1,
+        transparent: true,
+        opacity: 0.08
+        
+    });
+    
+    // 잔디 인스턴스 수와 범위 설정
+    const instanceCount = 35000; // 인스턴스 수 (성능에 따라 조절)
+    const grassRadius = 70; // 배치 범위
+    
+    // 인스턴스드 메시 생성
+    const grassInstancedMesh = new THREE.InstancedMesh(
+        bladeGeometry,
+        grassMaterial,
+        instanceCount
+    );
+    grassInstancedMesh.castShadow = true;
+    grassInstancedMesh.receiveShadow = true;
+    
+    // 각 인스턴스의 행렬 설정
+    const dummy = new THREE.Object3D();
+    const dummyMatrix = new THREE.Matrix4();
+    
+    for (let i = 0; i < instanceCount; i++) {
+        // 무작위 위치 설정 (원형 분포)
+        const angle = Math.random() * Math.PI * 2;
+        const radius = Math.sqrt(Math.random()) * grassRadius; // 고른 분포
+        const x = Math.cos(angle) * radius;
+        const z = Math.sin(angle) * radius - 30; // 경로를 따라 배치하도록 중심 조정
+        
+        // 무작위 스케일 및 회전 설정
+        const scale = 0.8 + Math.random() * 0.4;
+        dummy.position.set(x, -2 + Math.random() * 0.1, z);
+        dummy.rotation.y = Math.random() * Math.PI;
+        dummy.rotation.x = Math.random() * 0.3; // 약간 기울어진 잔디
+        dummy.rotation.z = (Math.random() - 0.5) * 0.2; // 좌우 기울기
+        dummy.scale.set(scale, scale * (0.8 + Math.random() * 0.4), scale);
+        
+        // 색상 약간 변경 (짙은 회색의 여러 음영)
+        const shade = 0.7 + Math.random() * 0.3;
+        const color = new THREE.Color(darkGrassColor).multiplyScalar(shade);
+        grassInstancedMesh.setColorAt(i, color);
+        
+        // 행렬 설정
+        dummy.updateMatrix();
+        grassInstancedMesh.setMatrixAt(i, dummy.matrix);
+    }
+    
+    // 장면에 추가
+    scene.add(grassInstancedMesh);
+}
+
+// 바닥에 디테일 추가 (돌, 자갈 등)
+function addGroundDetails() {
+    const stoneColors = [0x333333, 0x383838, 0x2d2d2d];
+    
+    // 더 많은 돌 추가 (다양한 크기)
+    for (let i = 0; i < 270; i++) {
+        // 돌 크기 결정 - 80%는 작은 돌, 20%는 중간 크기 돌
+        const isLargeStone = Math.random() > 0.8;
+        const size = isLargeStone ? 
+            Math.random() * 0.3 + 0.2 : // 중간 크기
+            Math.random() * 0.15 + 0.05; // 작은 크기
+        
+        // 돌 모양 결정
+        const geomType = Math.floor(Math.random() * 3);
+        let stoneGeometry;
+        
+        if (geomType === 0) {
+            stoneGeometry = new THREE.DodecahedronGeometry(size, isLargeStone ? 1 : 0);
+        } else if (geomType === 1) {
+            stoneGeometry = new THREE.TetrahedronGeometry(size, isLargeStone ? 1 : 0);
+        } else {
+            stoneGeometry = new THREE.IcosahedronGeometry(size, isLargeStone ? 1 : 0);
+        }
+        
+        // 돌을 약간 변형하여 자연스럽게 보이도록
+        if (isLargeStone) {
+            const pos = stoneGeometry.attributes.position;
+            const v3 = new THREE.Vector3();
+            
+            for (let j = 0; j < pos.count; j++) {
+                v3.fromBufferAttribute(pos, j);
+                
+                // 랜덤하게 정점 위치 변형
+                v3.x += (Math.random() - 0.5) * 0.1;
+                v3.y += (Math.random() - 0.5) * 0.1;
+                v3.z += (Math.random() - 0.5) * 0.1;
+                
+                pos.setXYZ(j, v3.x, v3.y, v3.z);
+            }
+            
+            stoneGeometry.computeVertexNormals();
+        }
+        
+        // 돌 재질 생성
+        const colorVariation = Math.random() * 0.1 - 0.05; // -0.05에서 0.05 사이
+        const stoneColor = new THREE.Color(stoneColors[Math.floor(Math.random() * stoneColors.length)]);
+        stoneColor.r += colorVariation;
+        stoneColor.g += colorVariation;
+        stoneColor.b += colorVariation;
+        
+        const stoneMaterial = new THREE.MeshStandardMaterial({
+            color: stoneColor,
+            roughness: 0.9,
+            metalness: 0.1,
+            flatShading: true
+        });
+        
+        // 돌 메시 생성
+        const stone = new THREE.Mesh(stoneGeometry, stoneMaterial);
+        
+        // 위치 설정 - 넓은 범위에 분포
+        const angle = Math.random() * Math.PI * 2;
+        const radius = Math.sqrt(Math.random()) * 70; // 고른 분포
+        stone.position.set(
+            Math.cos(angle) * radius,
+            -1.95 + Math.random() * 0.1, // 바닥에 살짝 묻힘
+            Math.sin(angle) * radius - 30 // 경로에 맞게 중심 조정
+        );
+        
+        stone.rotation.set(
+            Math.random() * Math.PI,
+            Math.random() * Math.PI,
+            Math.random() * Math.PI
+        );
+        
+        stone.castShadow = true;
+        stone.receiveShadow = true;
+        scene.add(stone);
+    }
+}
+        
+        // Create image-based memorial object
+        function createImageMemorial(imageUrl = '/api/placeholder/400/600') {
+            const group = new THREE.Group();
+            
+            // Create a plane for the image
+            const aspectRatio = 3/4; // Adjust based on your images
+            const width = 4;
+            const height = width * aspectRatio;
+            
+            // Load image texture
+            const texture = textureLoader.load(imageUrl, function(tex) {
+                // Update aspect ratio when texture is loaded
+                const actualRatio = tex.image.height / tex.image.width;
+                imagePlane.scale.y = actualRatio;
+            });
+            
+            // Create plane with material using the texture
+            const planeGeometry = new THREE.PlaneGeometry(width, height);
+            const planeMaterial = new THREE.MeshStandardMaterial({
+                map: texture,
+                transparent: true,
+                side: THREE.DoubleSide,
+                roughness: 0.3, // Slight reflectivity for glass-like effect
+                metalness: 0.1
+            });
+            
+            const imagePlane = new THREE.Mesh(planeGeometry, planeMaterial);
+            imagePlane.castShadow = true;
+            imagePlane.receiveShadow = true;
+            group.add(imagePlane);
+            
+            // Add a simple base/stand
+            const baseGeometry = new THREE.BoxGeometry(width * 0.8, 0.2, 0.3);
+            const baseMaterial = new THREE.MeshStandardMaterial({
+                color: 0x4a4a4a,
+                roughness: 0.7
+            });
+            const base = new THREE.Mesh(baseGeometry, baseMaterial);
+            base.position.y = -(height/2 + 0.1);
+            base.castShadow = true;
+            base.receiveShadow = true;
+            group.add(base);
+            
+            return group;
+        }
+        
+        // Create image-based tombstones
+        function createImageTombstones() {
+            // Sample placeholder images - replace with your own URLs
+            const imageUrls = [
+                'tomb_1.png',  // Replace with your URL
+                'tomb_2.png',  // Replace with your URL
+                'tomb_3.png',  // Replace with your URL
+                'tomb_4.png',  // Replace with your URL
+                
+            ];
+            
+            const positions = [
+                { x: 0, y: 0, z: -15 },
+                { x: 8, y: 0, z: -25 },
+                { x: -5, y: 0, z: -35 },
+                { x: 3, y: 0, z: -45 },
+                
+            ];
+            
+            positions.forEach((position, index) => {
+                const memorial = createImageMemorial(imageUrls[index]);
+                
+                // Random slight rotations for natural look
+                memorial.rotation.y = Math.random() * 0.3 - 0.15;
+                
+                // Position
+                memorial.position.set(position.x, position.y, position.z);
+                scene.add(memorial);
+                
+                // Store tombstone data
+                tombstones.push({
+                    object: memorial,
+                    position: position,
+                    index: index,
+                    originalRotation: memorial.rotation.clone()
+                });
+                
+                // Add surrounding details
+                addEnvironmentalDetails(position);
+            });
+            
+            // Create atmospheric fog for depth
+            scene.fog = new THREE.FogExp2(0x00ffff, 0.015);
+            
+             // Show initial tombstone info (첫 번째 무덤 팝업 표시)
+             setTimeout(() => {
+                const firstTombstoneInfo = document.querySelector('.tombstone-info[data-index="0"]');
+                if (firstTombstoneInfo) {
+                    gsap.to(firstTombstoneInfo, {
+                        opacity: 1,
+                        y: 0,
+                        duration: 0.8,
+                        ease: "power2.out"
+                    });
+                    firstTombstoneInfo.classList.add('active');
+                }
+            }, 1000); // 로딩 완료 후 1초 뒤에 표시
+            
+            // Remove loading screen
+            setTimeout(() => {
+                loadingScreen.style.opacity = 0;
+                setTimeout(() => {
+                    loadingScreen.style.display = 'none';
+                }, 1000);
+            }, 1000);
+
+        }
+        
+        // Add environmental details around memorials
+        function addEnvironmentalDetails(position) {
+            // 수정: 작고 각진 돌 추가 (기존의 둥근 돌 대신)
+            const rockColors = [0x5c5c5c, 0x4a4a4a, 0x6b6b6b, 0x706e6e, 0x52524f];
+            
+            // 작은 각진 돌들 - 기하학 형태를 DodecahedronGeometry에서 BoxGeometry로 변경
+            for (let i = 0; i < 35; i++) { // 돌 개수 증가
+                // 모양을 다양하게 하기 위해 랜덤하게 기하학 타입 선택
+                let rockGeometry;
+                const geomType = Math.floor(Math.random() * 3);
+                
+                // 크기를 더 작게 조정
+                const size = Math.random() * 0.1 + 0.02; // 크기 범위 축소
+                
+                if (geomType === 0) {
+                    // 직육면체 - 각진 형태
+                    rockGeometry = new THREE.BoxGeometry(
+                        size * (0.8 + Math.random() * 0.4),
+                        size * (0.8 + Math.random() * 0.4),
+                        size * (0.8 + Math.random() * 0.4)
+                    );
+                } else if (geomType === 1) {
+                    // 사각뿔 - 각진 형태
+                    rockGeometry = new THREE.TetrahedronGeometry(size, 0);
+                } else {
+                    // 육면체 - 각진 형태, 낮은 세분화
+                    rockGeometry = new THREE.IcosahedronGeometry(size, 0);
+                }
+                
+                const rockMaterial = new THREE.MeshStandardMaterial({
+                    color: rockColors[Math.floor(Math.random() * rockColors.length)],
+                    roughness: 0.9,
+                    flatShading: true // 평평한 쉐이딩으로 더 각진 느낌
+                });
+                
+                const rock = new THREE.Mesh(rockGeometry, rockMaterial);
+                rock.position.set(
+                    position.x + Math.random() * 4 - 2, // 넓게 분포
+                    position.y - 1.8 + Math.random() * 0.3, // 지면에 더 가깝게
+                    position.z + Math.random() * 4 - 2  // 넓게 분포
+                );
+                rock.rotation.set(
+                    Math.random() * Math.PI,
+                    Math.random() * Math.PI,
+                    Math.random() * Math.PI
+                );
+                rock.castShadow = true;
+                rock.receiveShadow = true;
+                scene.add(rock);
+            }
+            
+            // 중간 크기의 각진 돌 몇 개 추가
+            for (let i = 0; i < 5; i++) {
+                // 각진 형태의 기하학 사용
+                const geomType = Math.floor(Math.random() * 2);
+                let rockGeometry;
+                
+                // 크기를 더 작게 조정
+                const size = Math.random() * 0.15 + 0.08; // 크기 범위 축소
+                
+                if (geomType === 0) {
+                    rockGeometry = new THREE.BoxGeometry(
+                        size * (0.8 + Math.random() * 0.4),
+                        size * (0.8 + Math.random() * 0.4),
+                        size * (0.8 + Math.random() * 0.4)
+                    );
+                } else {
+                    rockGeometry = new THREE.TetrahedronGeometry(size, 0);
+                }
+                
+                const rockMaterial = new THREE.MeshStandardMaterial({
+                    color: rockColors[Math.floor(Math.random() * rockColors.length)],
+                    roughness: 0.9,
+                    flatShading: true // 평평한 쉐이딩으로 더 각진 느낌
+                });
+                
+                const rock = new THREE.Mesh(rockGeometry, rockMaterial);
+                rock.position.set(
+                    position.x + Math.random() * 3 - 1.5,
+                    position.y - 1.8 + Math.random() * 0.2, // 지면에 더 가깝게
+                    position.z + Math.random() * 3 - 1.5
+                );
+                rock.rotation.set(
+                    Math.random() * Math.PI,
+                    Math.random() * Math.PI,
+                    Math.random() * Math.PI
+                );
+                rock.castShadow = true;
+                rock.receiveShadow = true;
+                scene.add(rock);
+            }
+        }
+        
+        // Scroll event handler with debouncing
+        let scrollTimeout;
+        function onScroll() {
+            // Normalize scroll position
+            targetScrollY = Math.min(
+                (window.scrollY / (document.body.scrollHeight - window.innerHeight)) * 1.8,
+                1
+            );
+            
+            // Calculate current section
+            const newSection = Math.min(
+                Math.floor(targetScrollY * tombstones.length), 
+                tombstones.length - 1
+            );
+            
+            // If we've moved to a new section
+            if (newSection !== currentSection) {
+                previousSection = currentSection;
+                currentSection = newSection;
+                
+                // Update tombstone info visibility with GSAP for smoother transitions
+                tombstoneInfoElements.forEach(info => {
+                    const infoIndex = parseInt(info.dataset.index);
+                    if (infoIndex === currentSection) {
+                        // Complete the onScroll function that was cut off
+                gsap.to(info, {
+                    opacity: 1,
+                    y: 0,
+                    duration: 0.8,
+                    ease: "power2.out"
+                });
+                info.classList.add('active');
+            } else {
+                gsap.to(info, {
+                    opacity: 0,
+                    y: 20,
+                    duration: 0.5,
+                    ease: "power2.in"
+                });
+                info.classList.remove('active');
+            }
+        });
+                
+        // Transition skydome
+        transitionSkydome(currentSection);
+                
+        // Clear any existing timeout
+        clearTimeout(scrollTimeout);
+                
+        // Set new timeout for camera animation
+        scrollTimeout = setTimeout(() => {
+            updateCameraTarget();
+        }, 100);
+    }
+}
+        
+// Mouse move event handler
+function onMouseMove(event) {
+    // Convert mouse position to normalized device coordinates (-1 to +1)
+    mouseX = (event.clientX / window.innerWidth) * 2 - 1;
+    mouseY = -(event.clientY / window.innerHeight) * 2 + 1;
+}
+        
+// Window resize handler
+function onWindowResize() {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+}
+        
+// Update camera target based on current section
+function updateCameraTarget() {
+    if (tombstones.length === 0 || currentSection >= tombstones.length) return;
+            
+    const tombstone = tombstones[currentSection];
+            
+    // Update camera target position
+    cameraTargetPosition = {
+        x: tombstone.position.x + 1,
+        y: tombstone.position.y + 1.5,
+        z: tombstone.position.z + 5  // Position camera in front of tombstone
+    };
+            
+    // Set look at target to the tombstone
+    cameraTargetLookAt = {
+        x: tombstone.position.x,
+        y: tombstone.position.y,
+        z: tombstone.position.z
+    };
+            
+    // Animate camera movement
+    gsap.to(camera.position, {
+        x: cameraTargetPosition.x,
+        y: cameraTargetPosition.y,
+        z: cameraTargetPosition.z,
+        duration: 2,
+        ease: "power2.inOut"
+    });
+}
+        
+// Animation loop
+function animate() {
+    requestAnimationFrame(animate);
+            
+    // Smooth scroll interpolation
+    scrollY = THREE.MathUtils.lerp(scrollY, targetScrollY, 0.05);
+            
+    // Get delta time for animations
+    const delta = clock.getDelta();
+            
+    // Update code remnants (floating text)
+    codeRemnants.forEach(remnant => {
+        const userData = remnant.userData;
+        const elapsedTime = clock.getElapsedTime();
+                
+        // Only animate code remnants near current section
+        if (Math.abs(userData.tombstoneIndex - currentSection) <= 1) {
+            // Floating animation
+            remnant.position.y = userData.originY + 
+                Math.sin(elapsedTime * userData.verticalSpeed + userData.phaseOffset) * userData.amplitude;
+                    
+            // Circular motion
+            const angle = userData.angle + elapsedTime * userData.speed;
+            remnant.position.x = userData.originX + Math.cos(angle) * 0.2;
+            remnant.position.z = userData.originZ + Math.sin(angle) * 0.2;
+                    
+            // Face camera
+            remnant.lookAt(camera.position);
+                    
+            // Fade based on distance from current section
+            const fadeDistance = Math.abs(userData.tombstoneIndex - currentSection);
+            const targetOpacity = fadeDistance < 0.5 ? 0.9 : 0.3;
+            remnant.material.opacity = THREE.MathUtils.lerp(
+                remnant.material.opacity,
+                targetOpacity,
+                0.05
+            );
+        } else {
+            // Hide remnants far from current section
+            remnant.material.opacity = THREE.MathUtils.lerp(remnant.material.opacity, 0, 0.05);
+        }
+    });
+            
+    // Animate fog particles
+    fogParticles.forEach(particle => {
+        const elapsedTime = clock.getElapsedTime();
+                
+        // Simple floating animation
+        particle.position.y = particle.userData.originalY + 
+            Math.sin(elapsedTime * particle.userData.speed) * particle.userData.amplitude;
+                
+        // Slight horizontal drift
+        particle.position.x += particle.userData.xSpeed;
+                
+        // Reset position if particle drifts too far
+        if (particle.position.x > 30) particle.position.x = -30;
+        if (particle.position.x < -30) particle.position.x = 30;
+    });
+            
+    // Apply subtle camera movement based on mouse position
+    if (camera && mouseX !== undefined && mouseY !== undefined) {
+        camera.position.x += (mouseX * 0.1 - camera.position.x + cameraTargetPosition.x) * 0.05;
+        camera.position.y += (-mouseY * 0.1 - camera.position.y + cameraTargetPosition.y) * 0.05;
+    }
+            
+    // Update camera look at
+    if (cameraTargetLookAt) {
+        camera.lookAt(
+            cameraTargetLookAt.x,
+            cameraTargetLookAt.y,
+            cameraTargetLookAt.z
+        );
+    }
+            
+    // Update tombstone rotations slightly based on mouse position
+    tombstones.forEach(tombstone => {
+        if (tombstone.object) {
+            // Calculate distance from current section
+            const distanceFromCurrent = Math.abs(tombstone.index - currentSection);
+                    
+            // Only animate if close to current section
+            if (distanceFromCurrent < 1.5) {
+                // Add slight rotation based on mouse movement
+                tombstone.object.rotation.y = tombstone.originalRotation.y + mouseX * 0.2;
+            }
+        }
+    });
+            
+    // Update skydome rotation
+    if (skydome) {
+        skydome.rotation.y += 0.0001; // Very slow rotation
+    }
+            
+    renderer.render(scene, camera);
+}
+        
+// Initialize scene with loading progress
+function init() {
+    // Update loading progress
+    let loadingProgress = 0;
+    const progressBar = document.querySelector('.loading-progress');
+    const loadingInterval = setInterval(() => {
+        loadingProgress += Math.random() * 10;
+        if (loadingProgress > 100) {
+            loadingProgress = 100;
+            clearInterval(loadingInterval);
+            
+            // Setup scene when loading is complete
+            setTimeout(() => {
+                setupScene();
+            }, 500);
+        }
+        
+        progressBar.style.width = loadingProgress + '%';
+    }, 100);
+}
+        
+// Start initialization
+window.addEventListener('DOMContentLoaded', init);
+
+// Go button click event listeners
+document.addEventListener('DOMContentLoaded', function() {
+    const goButtons = document.querySelectorAll('.go-button');
+    
+    goButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const link = this.getAttribute('data-link');
+            if (link) {
+                window.location.href = link;
+            }
+        });
+    });
+})
+</script>
+</body>
+</html>
