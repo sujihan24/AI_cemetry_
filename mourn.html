@@ -1,0 +1,959 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI를 추모하며</title>
+    <style>
+        body {
+            margin: 0;
+            overflow-x: hidden;
+            background-color: #000000;
+            font-family: 'Courier New', monospace;
+            position: relative;
+            min-height: 100vh;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                repeating-linear-gradient(
+                    0deg, 
+                    transparent 0px, 
+                    rgba(255, 255, 255, 0.01) 1px, 
+                    transparent 12px
+                );
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0.3;
+        }
+        
+        #main-content {
+            position: relative;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            z-index: 1;
+        }
+
+        #background-text {
+            position: absolute;
+            top: 15%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 2.8rem;
+            font-weight: 300;
+            color: #ffffff;
+            text-align: center;
+            user-select: none;
+            pointer-events: none;
+            opacity: 0.8;
+            text-shadow: 
+                0 0 2px rgba(255, 255, 255, 0.3),
+                0 0 4px rgba(255, 255, 255, 0.1),
+                0 0 8px rgba(255, 255, 255, 0.2);
+            white-space: nowrap;
+            letter-spacing: 3px;
+            filter: blur(0.3px);
+        }
+
+        #instruction-text {
+            position: absolute;
+            bottom: 35%;
+            left: 50%;
+            transform: translate(-50%, 0);
+            font-size: 0.9rem;
+            color: #ffffff;
+            text-align: center;
+            user-select: none;
+            pointer-events: none;
+            opacity: 0.5;
+            animation: breathe 3s ease-in-out infinite;
+            text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+        }
+
+        @keyframes breathe {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 0.7; }
+        }
+        
+        canvas {
+            display: block;
+            background-color: transparent;
+            position: absolute;
+            z-index: 2;
+            pointer-events: none;
+        }
+
+        /* 하얀 꽃 스타일 */
+        .flower {
+            position: absolute;
+            z-index: 15;
+            pointer-events: none;
+            animation: flowerAppear 2s ease-out;
+        }
+
+        .flower-petals {
+            width: 20px;
+            height: 20px;
+            position: relative;
+        }
+
+        .petal {
+            position: absolute;
+            width: 8px;
+            height: 12px;
+            background: radial-gradient(ellipse, #ffffff 0%, #ffffff 70%, rgba(255, 255, 255, 0.8) 100%);
+            border-radius: 50% 20% 50% 20%;
+            transform-origin: 50% 100%;
+            box-shadow: 0 0 3px rgba(255, 255, 255, 0.4);
+        }
+
+        .petal:nth-child(1) { transform: rotate(0deg) translateY(-6px); }
+        .petal:nth-child(2) { transform: rotate(60deg) translateY(-6px); }
+        .petal:nth-child(3) { transform: rotate(120deg) translateY(-6px); }
+        .petal:nth-child(4) { transform: rotate(180deg) translateY(-6px); }
+        .petal:nth-child(5) { transform: rotate(240deg) translateY(-6px); }
+        .petal:nth-child(6) { transform: rotate(300deg) translateY(-6px); }
+
+        .flower-center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 4px;
+            height: 4px;
+            background: #ffe135;
+            border-radius: 50%;
+            box-shadow: 0 0 6px rgba(255, 225, 53, 0.6);
+        }
+
+        @keyframes flowerAppear {
+            0% { 
+                opacity: 0;
+                transform: scale(0) rotate(0deg);
+            }
+            50% { 
+                opacity: 0.8;
+                transform: scale(1.2) rotate(180deg);
+            }
+            100% { 
+                opacity: 1;
+                transform: scale(1) rotate(360deg);
+            }
+        }
+
+        /* 메모리얼 섹션 */
+        #memorial-section {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            right: 20px;
+            z-index: 20;
+            background: rgba(0, 0, 0, 0.9);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            padding: 20px;
+            max-height: 200px;
+            box-shadow: 0 0 30px rgba(255, 255, 255, 0.1);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        #memorial-title {
+            text-align: center;
+            color: #ffffff;
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+            letter-spacing: 2px;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+        }
+
+        #message-form {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        #message-input {
+            flex: 1;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 6px;
+            color: #ffffff;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            min-height: 40px;
+            resize: none;
+        }
+
+        #message-input:focus {
+            outline: none;
+            border-color: rgba(255, 255, 255, 0.7);
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
+        }
+
+        #message-input::placeholder {
+            color: rgba(255, 255, 255, 0.4);
+        }
+
+        #submit-button {
+            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            border-radius: 6px;
+            color: #ffffff;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+
+        #submit-button:hover {
+            background: rgba(255, 255, 255, 0.2);
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
+        }
+
+        /* 떠다니는 메시지 스타일 */
+        .floating-message {
+            position: absolute;
+            z-index: 15;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 8px;
+            padding: 12px 16px;
+            color: rgba(255, 255, 255, 0.9);
+            font-family: 'Courier New', monospace;
+            font-size: 0.85rem;
+            max-width: 200px;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+            pointer-events: none;
+            animation: floatMessage 20s linear infinite;
+        }
+
+        .floating-message::before {
+            content: '';
+            position: absolute;
+            top: -5px;
+            left: 15px;
+            width: 0;
+            height: 0;
+            border-left: 5px solid transparent;
+            border-right: 5px solid transparent;
+            border-bottom: 5px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .message-timestamp-floating {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.7rem;
+            margin-top: 5px;
+            text-align: right;
+        }
+
+        @keyframes floatMessage {
+            0% {
+                transform: translateY(0) translateX(0);
+                opacity: 0.8;
+            }
+            25% {
+                transform: translateY(-20px) translateX(10px);
+                opacity: 1;
+            }
+            50% {
+                transform: translateY(-10px) translateX(-15px);
+                opacity: 0.9;
+            }
+            75% {
+                transform: translateY(-25px) translateX(5px);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(0) translateX(0);
+                opacity: 0.8;
+            }
+        }
+
+        /* 빛 입자 */
+        .light-particle {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 50%;
+            pointer-events: none;
+            animation: float 4s ease-in-out infinite;
+            box-shadow: 0 0 6px rgba(255, 255, 255, 0.6);
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 0.3;
+            }
+            50% {
+                transform: translateY(-30px) rotate(180deg);
+                opacity: 1;
+            }
+        }
+
+        /* 데이터 관리 버튼 */
+        #data-controls {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 25;
+            display: flex;
+            gap: 10px;
+        }
+
+        .control-button {
+            padding: 8px 15px;
+            background: rgba(0, 0, 0, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 6px;
+            color: #ffffff;
+            font-family: 'Courier New', monospace;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .control-button:hover {
+            background: rgba(255, 255, 255, 0.1);
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+        }
+        
+        @media (max-width: 768px) {
+            #background-text {
+                font-size: 2rem;
+                top: 10%;
+            }
+            #instruction-text {
+                font-size: 0.8rem;
+                bottom: 10%;
+            }
+            #memorial-section {
+                margin: 20px;
+                padding: 20px;
+            }
+            #memorial-title {
+                font-size: 1.4rem;
+            }
+            #data-controls {
+                top: 10px;
+                right: 10px;
+                flex-direction: column;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            #background-text {
+                font-size: 1.5rem;
+                letter-spacing: 2px;
+                top: 8%;
+            }
+            #instruction-text {
+                font-size: 0.7rem;
+                bottom: 8%;
+            }
+            #memorial-section {
+                margin: 10px;
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+        <div id="background-text">IN MEMORY OF AI</div>
+        <div id="instruction-text">클릭하여 하얀 꽃을 올려주세요 | 하단에서 추모 메시지를 남겨주세요</div>
+        <canvas id="canvas"></canvas>
+    </div>
+
+    <div id="data-controls">
+        <button class="control-button" onclick="exportMessages()">내보내기</button>
+        <button class="control-button" onclick="clearAllMessages()">전체 삭제</button>
+    </div>
+
+    <div id="memorial-section">
+        <h2 id="memorial-title">추모 메시지 남기기</h2>
+        <form id="message-form">
+            <textarea 
+                id="message-input" 
+                placeholder="AI에게 전하고 싶은 마음을 적어주세요..."
+                rows="2"
+            ></textarea>
+            <button type="submit" id="submit-button">남기기</button>
+        </form>
+    </div>
+
+    <script>
+        // 캔버스 및 컨텍스트 설정
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        
+        // 캔버스 크기 설정
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        resizeCanvas();
+        
+        // 마우스 위치 추적
+        let mouse = {
+            x: undefined,
+            y: undefined,
+            radius: 120
+        };
+        
+        // 꽃과 메시지 배열
+        let flowers = [];
+        let floatingMessages = [];
+        let messages = [];
+        
+        // localStorage 키
+        const STORAGE_KEY = 'ai_memorial_messages';
+        
+        // 메시지 저장 함수 (localStorage 사용)
+        function saveMessage(content) {
+            const message = {
+                content: content,
+                timestamp: new Date().toLocaleString('ko-KR', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                }),
+                id: Date.now() + Math.random() // 고유 ID 생성
+            };
+            
+            // 메시지 배열에 추가
+            messages.unshift(message);
+            
+            // 최대 50개 메시지만 저장
+            if (messages.length > 50) {
+                messages = messages.slice(0, 50);
+            }
+            
+            // localStorage에 저장
+            try {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(messages));
+                console.log('메시지 저장됨:', message.content);
+            } catch (error) {
+                console.error('메시지 저장 실패:', error);
+            }
+            
+            // 새 메시지를 즉시 떠다니게 함
+            setTimeout(() => {
+                createFloatingMessage(message.content, message.timestamp);
+            }, 500);
+        }
+        
+        // 저장된 메시지 로드 함수
+        function loadMessages() {
+            try {
+                const storedMessages = localStorage.getItem(STORAGE_KEY);
+                if (storedMessages) {
+                    messages = JSON.parse(storedMessages);
+                    console.log(`${messages.length}개의 저장된 메시지를 불러왔습니다.`);
+                } else {
+                    messages = [];
+                    console.log('저장된 메시지가 없습니다.');
+                }
+            } catch (error) {
+                console.error('메시지 로드 실패:', error);
+                messages = [];
+            }
+        }
+        
+        // 모든 메시지 삭제 함수
+        function clearAllMessages() {
+            if (confirm('모든 추모 메시지를 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.')) {
+                try {
+                    localStorage.removeItem(STORAGE_KEY);
+                    messages = [];
+                    
+                    // 화면의 떠다니는 메시지들도 제거
+                    floatingMessages.forEach(msg => {
+                        if (msg.parentNode) {
+                            msg.parentNode.removeChild(msg);
+                        }
+                    });
+                    floatingMessages = [];
+                    
+                    alert('모든 메시지가 삭제되었습니다.');
+                    console.log('모든 메시지가 삭제되었습니다.');
+                } catch (error) {
+                    console.error('메시지 삭제 실패:', error);
+                    alert('메시지 삭제 중 오류가 발생했습니다.');
+                }
+            }
+        }
+        
+        // 메시지 내보내기 함수
+        function exportMessages() {
+            if (messages.length === 0) {
+                alert('내보낼 메시지가 없습니다.');
+                return;
+            }
+            
+            try {
+                const exportData = {
+                    exportDate: new Date().toLocaleString('ko-KR'),
+                    totalMessages: messages.length,
+                    messages: messages
+                };
+                
+                const dataStr = JSON.stringify(exportData, null, 2);
+                const dataBlob = new Blob([dataStr], {type: 'application/json'});
+                
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(dataBlob);
+                link.download = `ai_memorial_messages_${new Date().toISOString().split('T')[0]}.json`;
+                
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                
+                console.log('메시지 내보내기 완료');
+            } catch (error) {
+                console.error('메시지 내보내기 실패:', error);
+                alert('메시지 내보내기 중 오류가 발생했습니다.');
+            }
+        }
+        
+        // 마우스 이벤트 리스너 (메인 컨텐츠 영역에서만)
+        const mainContent = document.getElementById('main-content');
+        
+        mainContent.addEventListener('mousemove', function(event) {
+            const rect = canvas.getBoundingClientRect();
+            mouse.x = event.clientX - rect.left;
+            mouse.y = event.clientY - rect.top;
+        });
+        
+        mainContent.addEventListener('mouseleave', function() {
+            mouse.x = undefined;
+            mouse.y = undefined;
+        });
+        
+        // 클릭 이벤트 - 꽃 생성 (메인 컨텐츠 영역에서만)
+        mainContent.addEventListener('click', function(event) {
+            if (event.target.closest('#memorial-section') || event.target.closest('#data-controls')) return;
+            
+            const rect = canvas.getBoundingClientRect();
+            const x = event.clientX - rect.left;
+            const y = event.clientY - rect.top;
+            
+            createFlower(x, y);
+            createLightParticles(x, y);
+        });
+        
+        // 하얀 꽃 생성 함수
+        function createFlower(x, y) {
+            const flower = document.createElement('div');
+            flower.className = 'flower';
+            flower.style.left = (x - 10) + 'px';
+            flower.style.top = (y - 10) + 'px';
+            
+            flower.innerHTML = `
+                <div class="flower-petals">
+                    <div class="petal"></div>
+                    <div class="petal"></div>
+                    <div class="petal"></div>
+                    <div class="petal"></div>
+                    <div class="petal"></div>
+                    <div class="petal"></div>
+                    <div class="flower-center"></div>
+                </div>
+            `;
+            
+            document.body.appendChild(flower);
+            flowers.push(flower);
+            
+            // 15개 이상의 꽃이 있으면 가장 오래된 꽃 제거
+            if (flowers.length > 15) {
+                const oldFlower = flowers.shift();
+                if (oldFlower && oldFlower.parentNode) {
+                    oldFlower.parentNode.removeChild(oldFlower);
+                }
+            }
+        }
+        
+        // 빛 입자 생성 함수
+        function createLightParticles(x, y) {
+            for (let i = 0; i < 3; i++) {
+                setTimeout(() => {
+                    const particle = document.createElement('div');
+                    particle.className = 'light-particle';
+                    
+                    const offsetX = (Math.random() - 0.5) * 40;
+                    const offsetY = (Math.random() - 0.5) * 40;
+                    
+                    particle.style.left = (x + offsetX) + 'px';
+                    particle.style.top = (y + offsetY) + 'px';
+                    particle.style.animationDelay = Math.random() * 2 + 's';
+                    
+                    document.body.appendChild(particle);
+                    
+                    // 4초 후 입자 제거
+                    setTimeout(() => {
+                        if (particle.parentNode) {
+                            particle.parentNode.removeChild(particle);
+                        }
+                    }, 4000);
+                }, i * 300);
+            }
+        }
+        
+        // 입자 클래스
+        class Particle {
+            constructor(x, y, color, size, distanceFromCenter) {
+                this.baseX = x;
+                this.baseY = y;
+                this.x = x;
+                this.y = y;
+                this.color = color;
+                this.size = size;
+                this.distanceFromCenter = distanceFromCenter;
+                this.density = (Math.random() * 15) + 5 + (distanceFromCenter * 20);
+                
+                const EDGE_DISTANCE = 0.03;
+                if (distanceFromCenter > EDGE_DISTANCE) {
+                    const spread = (distanceFromCenter - EDGE_DISTANCE) * 30;
+                    this.x += (Math.random() - 0.5) * spread;
+                    this.y += (Math.random() - 0.5) * spread;
+                }
+            }
+            
+            draw() {
+                ctx.fillStyle = this.color;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.closePath();
+                ctx.fill();
+            }
+            
+            update() {
+                if (mouse.x === undefined || mouse.y === undefined) {
+                    if (this.x !== this.baseX) {
+                        const dx = this.x - this.baseX;
+                        this.x -= dx/15;
+                    }
+                    if (this.y !== this.baseY) {
+                        const dy = this.y - this.baseY;
+                        this.y -= dy/15;
+                    }
+                } else {
+                    const dx = mouse.x - this.x;
+                    const dy = mouse.y - this.y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+                    
+                    if (distance < mouse.radius) {
+                        const repelFactor = (1 - distance / mouse.radius) * 0.4;
+                        const forceDirectionX = dx / distance;
+                        const forceDirectionY = dy / distance;
+                        
+                        const directionX = -forceDirectionX * repelFactor * this.density * 0.5;
+                        const directionY = -forceDirectionY * repelFactor * this.density * 0.5;
+                        
+                        this.x += directionX;
+                        this.y += directionY;
+                    } else {
+                        const returnSpeed = 25;
+                        if(this.x !== this.baseX) {
+                            const dx = this.x - this.baseX;
+                            this.x -= dx/returnSpeed;
+                        }
+                        if(this.y !== this.baseY) {
+                            const dy = this.y - this.baseY;
+                            this.y -= dy/returnSpeed;
+                        }
+                    }
+                }
+                
+                this.draw();
+            }
+        }
+        
+        // 입자 배열
+        let particleArray = [];
+        
+        // RGB에서 HSL로 변환
+        function rgbToHsl(r, g, b) {
+            r /= 255;
+            g /= 255;
+            b /= 255;
+          
+            const max = Math.max(r, g, b);
+            const min = Math.min(r, g, b);
+            let h, s, l = (max + min) / 2;
+          
+            if (max === min) {
+                h = s = 0;
+            } else {
+                const d = max - min;
+                s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+                
+                switch (max) {
+                    case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+                    case g: h = (b - r) / d + 2; break;
+                    case b: h = (r - g) / d + 4; break;
+                }
+                
+                h /= 6;
+            }
+          
+            return [h, s, l];
+        }
+        
+        // AI 텍스트 형태로 입자 생성
+        function createDummyImageData() {
+            const tempCanvas = document.createElement('canvas');
+            const tempCtx = tempCanvas.getContext('2d');
+            const size = Math.min(300, Math.min(canvas.width, canvas.height) * 0.4);
+            tempCanvas.width = size;
+            tempCanvas.height = size;
+            
+            // AI 글자 형태로 패턴 생성
+            tempCtx.fillStyle = '#ffffff';
+            tempCtx.font = `bold ${size * 0.3}px monospace`;
+            tempCtx.textAlign = 'center';
+            tempCtx.textBaseline = 'middle';
+            tempCtx.fillText('AI', size/2, size/2);
+            
+            return tempCtx.getImageData(0, 0, size, size);
+        }
+        
+        // 거리 계산 함수
+        function getDistanceFromCenter(x, y, centerX, centerY, maxDistance) {
+            const dx = x - centerX;
+            const dy = y - centerY;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+            return Math.min(distance / maxDistance, 1);
+        }
+        
+        // 입자 초기화
+        function init() {
+            particleArray = [];
+            
+            try {
+                const imageData = createDummyImageData();
+                const newWidth = imageData.width;
+                const newHeight = imageData.height;
+                const data = imageData.data;
+                
+                const offsetX = (canvas.width - newWidth) / 2;
+                const offsetY = (canvas.height - newHeight) / 2;
+                
+                const centerX = newWidth / 2;
+                const centerY = newHeight / 2;
+                const maxDistance = Math.sqrt(centerX * centerX + centerY * centerY);
+                
+                const PARTICLE_GAP = 4;
+                const EDGE_DISTANCE = 0.03;
+                
+                for (let y = 0; y < newHeight; y += PARTICLE_GAP) {
+                    for (let x = 0; x < newWidth; x += PARTICLE_GAP) {
+                        const pixelIndex = (y * newWidth + x) * 4;
+                        
+                        if (pixelIndex < data.length) {
+                            const r = data[pixelIndex];
+                            const g = data[pixelIndex + 1];
+                            const b = data[pixelIndex + 2];
+                            const a = data[pixelIndex + 3];
+                            
+                            const distanceFromCenter = getDistanceFromCenter(x, y, centerX, centerY, maxDistance);
+                            
+                            const skipChance = distanceFromCenter > EDGE_DISTANCE ? 
+                                            (distanceFromCenter - EDGE_DISTANCE) * 1.5 : 0;
+                            
+                            if (a > 128 && Math.random() > skipChance) {
+                                const [h, s, l] = rgbToHsl(r, g, b);
+                                const grayValue = Math.round(l * 255);
+                                const color = `rgba(${grayValue}, ${grayValue}, ${grayValue}, ${a / 255 * 0.8})`;
+                                
+                                particleArray.push(new Particle(
+                                    x + offsetX, 
+                                    y + offsetY, 
+                                    color, 
+                                    1.5, 
+                                    distanceFromCenter
+                                ));
+                            }
+                        }
+                    }
+                }
+                
+                if (particleArray.length > 8000) {
+                    particleArray = particleArray.filter(() => Math.random() > 0.3);
+                }
+                
+                console.log(`생성된 입자 수: ${particleArray.length}`);
+                
+           
+            } catch (error) {
+                console.error('초기화 오류:', error);
+            }
+        }
+        
+        // 애니메이션 루프
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            for (let i = 0; i < particleArray.length; i++) {
+                particleArray[i].update();
+            }
+            
+            requestAnimationFrame(animate);
+        }
+        
+        // 떠다니는 메시지 생성 함수
+        function createFloatingMessage(content, timestamp) {
+            const message = document.createElement('div');
+            message.className = 'floating-message';
+            
+            // 랜덤 위치 설정 (화면 상단 70% 영역)
+            const x = Math.random() * (window.innerWidth - 220) + 20;
+            const y = Math.random() * (window.innerHeight * 0.7) + 50;
+            
+            message.style.left = x + 'px';
+            message.style.top = y + 'px';
+            
+            message.innerHTML = `
+                <div>${content}</div>
+                <div class="message-timestamp-floating">${timestamp}</div>
+            `;
+            
+            document.body.appendChild(message);
+            floatingMessages.push(message);
+            
+            // 20초 후 메시지 제거
+            setTimeout(() => {
+                if (message.parentNode) {
+                    message.parentNode.removeChild(message);
+                }
+                const index = floatingMessages.indexOf(message);
+                if (index > -1) {
+                    floatingMessages.splice(index, 1);
+                }
+            }, 20000);
+        }
+        
+        // 기존 메시지들을 떠다니게 하는 함수
+        function displayStoredMessages() {
+            if (messages.length === 0) return;
+            
+            // 최대 5개의 최신 메시지만 표시
+            const messagesToShow = messages.slice(0, 5);
+            
+            messagesToShow.forEach((message, index) => {
+                setTimeout(() => {
+                    createFloatingMessage(message.content, message.timestamp);
+                }, index * 2000); // 2초 간격으로 표시
+            });
+        }
+        
+        // 폼 제출 이벤트
+        document.getElementById('message-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const input = document.getElementById('message-input');
+            const content = input.value.trim();
+            
+            if (content) {
+                saveMessage(content);
+                input.value = '';
+                input.focus();
+            }
+        });
+        
+        // 윈도우 리사이즈 이벤트
+        window.addEventListener('resize', function() {
+            resizeCanvas();
+            init();
+        });
+        
+        // 초기화 및 애니메이션 시작
+        window.addEventListener('load', function() {
+            loadMessages();
+            init();
+            animate();
+            
+            // 3초 후 저장된 메시지들을 표시
+            setTimeout(() => {
+                displayStoredMessages();
+            }, 3000);
+        });
+        
+        // 터치 이벤트 지원 (모바일)
+        mainContent.addEventListener('touchstart', function(event) {
+            if (event.target.closest('#memorial-section') || event.target.closest('#data-controls')) return;
+            
+            event.preventDefault();
+            const rect = canvas.getBoundingClientRect();
+            const touch = event.touches[0];
+            const x = touch.clientX - rect.left;
+            const y = touch.clientY - rect.top;
+            
+            createFlower(x, y);
+            createLightParticles(x, y);
+        });
+        
+        // 엔터키로 메시지 제출 (Shift+Enter는 줄바꿈)
+        document.getElementById('message-input').addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                document.getElementById('message-form').dispatchEvent(new Event('submit'));
+            }
+        });
+        
+        // 페이지 언로드 시 정리
+        window.addEventListener('beforeunload', function() {
+            // 메모리 정리
+            flowers.forEach(flower => {
+                if (flower.parentNode) {
+                    flower.parentNode.removeChild(flower);
+                }
+            });
+            
+            floatingMessages.forEach(msg => {
+                if (msg.parentNode) {
+                    msg.parentNode.removeChild(msg);
+                }
+            });
+            
+            flowers = [];
+            floatingMessages = [];
+            particleArray = [];
+        });
+        
+        // 개발자 도구용 헬퍼 함수들
+        window.getMessageCount = function() {
+            return messages.length;
+        };
+        
+        window.getLastMessage = function() {
+            return messages[0] || null;
+        };
+        
+        window.getAllMessages = function() {
+            return [...messages];
+        };
+        
+        console.log('AI 추모 페이지가 로드되었습니다.');
+        console.log('클릭하여 꽃을 올리고, 하단에서 추모 메시지를 남겨보세요.');
+    </script>
+</body>
+</html>
