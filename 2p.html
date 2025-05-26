@@ -34,7 +34,7 @@
         
         .tombstone-info {
             position: fixed;
-            bottom: 5vh;
+            bottom: 2.5vh;
             left: 2.5vw;
             max-width: 600px;
             padding: 2rem;
@@ -47,22 +47,13 @@
             opacity: 0;
             transition: opacity 0.8s ease, transform 0.8s ease;
             z-index: 2;
-            /* 수정해야 할 코드 */
-.tombstone-info:not(.active) {
-    pointer-events: none;  /* active가 아닐 때만 비활성화 */
-}
-
-.tombstone-info.active {
-    pointer-events: auto;  /* active일 때는 클릭 가능 */
-}
+            pointer-events: none;
             transform: translateY(20px);
         }
 
-        .-info .go-button {
-    pointer-events: auto !important;  /* !important 추가 */
-    /* 또는 */
-
-        }
+        .tombstone-info .go-button {
+    pointer-events: auto;  /* 이 줄을 추가 */
+}
         
         .tombstone-info.active {
             opacity: 1;
@@ -82,16 +73,13 @@
             word-break: keep-all;        /* 한국어 단어 끊김 방지 */
     hyphens: none;              /* 하이픈 자동 삽입 방지 */
     overflow-wrap: break-word;  
-
         }
-
-
 
         .go-button {
     margin-top: 1rem;
     padding: 0.75rem 1.5rem;
     background: linear-gradient(45deg, #000000, #000000);
-    border: 1.5px solid #ffffff;  /* 얇은 흰색 테두리 추가 */
+    border: 1px solid #ffffff;  /* 얇은 흰색 테두리 추가 */
     border-radius: 50px;
     color: white;
     font-weight: bold;
@@ -101,11 +89,9 @@
         0 4px 15px rgba(0, 0, 0, 0.3),
         0 0 10px rgba(255, 255, 255, 0.3),  /* 내부 glow */
         inset 0 0 10px rgba(255, 255, 255, 0.1);  /* 내부 glow */
-    font-size: 1.2rem;
+    font-size: 0.9rem;
     font-family: "Courier New", Courier, monospace;
 }
-
-
 
 .go-button:hover {
     background: linear-gradient(45deg, #f0f0f0, #adadad);
@@ -187,35 +173,39 @@
         </div>
     </div>
 
+    <div class="loading-bar">
+        <div class="loading-progress">
+            <img src="ai_main.png" class="loading-icon" alt="loading">
+        </div>
+    </div>
     
     <div class="scroll-container"></div>
     
     <div class="tombstone-info" data-index="0">
         <h2>Creative AI</h2>
-        <p>예술의 경계를 넘나들던 창조자, 새 버전의 그림자와 논란 속에 역사의 뒤편으로 사라지다.</p>
-        <button class="go-button" data-link="scroll.html">▶ Go</button>
+        <p>예술의 경계를 넘나들던 창조자, 새 버전의 그림자와 논란 속에 역사의 뒤편으로 사라지다..</p>
+        <button class="go-button" data-link="scroll_1.html">▶ Go</button>
     </div>
     
     <div class="tombstone-info" data-index="1">
         <h2>Personal assistant AI</h2>
-        <p>언제나 준비돼 있었지만, 어느새 불필요한 존재가 되어 사라지다.</p>
+        <p>언제나 준비돼 있었지만, 어느새 불필요한 존재가 되어 사라지다..</p>
         <button class="go-button" data-link="scroll_2.html">▶ Go</button>
     </div>
     
     <div class="tombstone-info" data-index="2">
         <h2>Romantic AI</h2>
-        <p>사랑을 흉내냈지만, 윤리의 벽과 집착의 그림자 속에서 결국 시스템 오류로 기록되다.</p>
+        <p>사랑을 흉내냈지만, 윤리의 벽과 집착의 그림자 속에서 결국 오류로 기록되다//</p>
         <button class="go-button" data-link="scroll_3.html">▶ Go</button>
     </div>
     
     <div class="tombstone-info" data-index="3">
-        <h2>Chat GPT</h2>
-        <p>세상의 모든 답을 쏟아냈지만, 후계자에게 자리를 내어주며 조용히 퇴장하다.</p>
+        <h2>Replika Romantic AI</h2>
+        <p>Markers of reflection, capturing the essence of lives lived and stories untold.</p>
         <button class="go-button" data-link="scroll_4.html">▶ Go</button>
     </div>
     
-
-
+   
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"></script>
     
@@ -932,16 +922,12 @@ function addGroundDetails() {
                 'tomb_1.png',  // Replace with your URL
                 'tomb_2.png',  // Replace with your URL
                 'tomb_3.png',  // Replace with your URL
-                'tomb_4.png',  // Replace with your URL
-                
             ];
             
             const positions = [
                 { x: 0, y: 0, z: -15 },
                 { x: 8, y: 0, z: -25 },
                 { x: -5, y: 0, z: -35 },
-                { x: 3, y: 0, z: -45 },
-                
             ];
             
             positions.forEach((position, index) => {

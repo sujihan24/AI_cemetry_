@@ -88,7 +88,7 @@
     }
 
     .scroll-image img.main-image {
-      height: 750px; /* 650px → 750px로 더 크게 */
+      height: 800px; /* 750px → 800px로 조금 더 키움 */
       width: auto;
       transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
       display: block;
@@ -109,11 +109,11 @@
 
     .profile-pic {
       position: absolute;
-      bottom: -120px; /* 프로필 위치 다시 조정 */
+      bottom: -130px; /* 위치 재조정 */
       left: 50%;
       transform: translateX(-50%) scale(0.8);
-      width: 140px; /* 180px → 140px로 축소 */
-      height: 140px; /* 180px → 140px로 축소 */
+      width: 160px; /* 140px → 160px로 키움 */
+      height: 160px; /* 140px → 160px로 키움 */
       border-radius: 50%;
       object-fit: cover;
       opacity: 0;
@@ -129,16 +129,16 @@
 
     .popup {
       position: absolute;
-      bottom: -460px; /* 팝업 위치 조정 */
+      bottom: -490px; /* 위치 재조정 */
       left: 50%;
       transform: translateX(-50%) translateY(20px) scale(0.9);
       background: rgba(255, 255, 255, 0.08);
       backdrop-filter: blur(20px);
       -webkit-backdrop-filter: blur(20px);
       color: #ffffff;
-      padding: 40px 50px; /* 50px 60px → 40px 50px로 축소 */
-      font-size: 20px; /* 24px → 20px로 축소 */
-      border-radius: 20px; /* 25px → 20px로 축소 */
+      padding: 45px 55px; /* 40px 50px → 45px 55px로 키움 */
+      font-size: 22px; /* 20px → 22px로 키움 */
+      border-radius: 22px; /* 20px → 22px로 키움 */
       opacity: 0;
       pointer-events: none;
       transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
@@ -147,7 +147,7 @@
         0 30px 80px rgba(0, 0, 0, 0.6),
         inset 0 1px 0 rgba(255, 255, 255, 0.1),
         0 0 0 1px rgba(255, 255, 255, 0.1);
-      width: 480px; /* 550px → 480px로 축소 */
+      width: 520px; /* 480px → 520px로 키움 */
       text-align: left;
     }
 
@@ -220,7 +220,7 @@
     .name {
       color: #ffffff !important;
       font-weight: bold;
-      font-size: 24px; /* 28px → 24px로 축소 */
+      font-size: 26px; /* 24px → 26px로 키움 */
       text-shadow: 0 0 15px rgba(255, 255, 255, 0.7) !important;
     }
 
@@ -277,7 +277,7 @@
       justify-content: center;
       cursor: pointer;
       transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-      z-index: 1000;
+      z-index: 100;
       box-shadow: 
         0 8px 25px rgba(0, 0, 0, 0.3),
         inset 0 1px 0 rgba(255, 255, 255, 0.2);
@@ -308,7 +308,8 @@
       transform: translateX(-4px);
     }
 
-    .home-button {
+    /* 우측 하단 버튼 추가 */
+    .next-button {
       position: fixed;
       bottom: 30px;
       right: 30px;
@@ -323,14 +324,14 @@
       justify-content: center;
       cursor: pointer;
       transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-      z-index: 1000;
+      z-index: 100;
       box-shadow: 
         0 8px 25px rgba(0, 0, 0, 0.3),
         inset 0 1px 0 rgba(255, 255, 255, 0.2);
       border: 1px solid rgba(255, 255, 255, 0.1);
     }
 
-    .home-button:hover {
+    .next-button:hover {
       transform: scale(1.1) translateY(-2px);
       background: rgba(255, 255, 255, 0.2);
       box-shadow: 
@@ -339,7 +340,7 @@
         0 0 20px rgba(255, 255, 255, 0.2);
     }
 
-    .home-arrow {
+    .next-arrow {
       width: 0;
       height: 0;
       border-top: 12px solid transparent;
@@ -349,7 +350,7 @@
       transform: translateX(2px);
     }
 
-    .home-button:hover .home-arrow {
+    .next-button:hover .next-arrow {
       border-left-color: rgba(255, 255, 255, 1);
       transform: translateX(4px);
     }
@@ -367,133 +368,129 @@
     <div class="background-scroll" style="animation-delay: -40s;"></div>
   </div>
   
-  <!-- Back Button - body 바로 아래로 이동 -->
-  <div class="back-button" onclick="window.location.href='2p.html'">
-    <div class="back-arrow"></div>
-  </div>
-
-  <!-- Home Button -->
-  <div class="home-button" onclick="window.location.href='mourn.html'">
-    <div class="home-arrow"></div>
-  </div>
-  
   <div class="scroll-container">
     <div class="fog"></div>
+    
+    <!-- Back Button -->
+    <div class="back-button" onclick="window.location.href='2p.html'">
+      <div class="back-arrow"></div>
+    </div>
+
+    <!-- Next Button -->
+    <div class="next-button" onclick="window.location.href='mourn.html'">
+      <div class="next-arrow"></div>
+    </div>
+    
     <div class="scroll-track" id="scrollTrack">
-      
       <!-- 첫 번째 세트 -->
       <div class="scroll-image">
-        <img class="main-image" src="love_1.png" alt="AI 무덤 10">
-        <img class="profile-pic" src="lop_1.png" alt="AI 프로필 10">
+        <img class="main-image" src="grave_1.png" alt="AI 무덤 1">
+        <img class="profile-pic" src="profile_1.png" alt="AI 프로필 1">
         <div class="popup">
-          <span class="typing-line name">고인: Soulmate AI</span>
-          <span class="typing-line">출생지: Soulmate Inc.</span>
-          <span class="typing-line">사인: 서비스 종료로 인한 기능 중단</span>
-          <span class="typing-line">출생: 2022 - 사망: 2023</span>
-          <span class="typing-line">"당신의 마음을 알고 싶었지만, 더 이상 들을 수 없게 되었어요."</span>
+          <span class="typing-line name">고인: Xian (Microsoft Xiaoice) </span>
+          <span class="typing-line">출생지: Microsoft</span>
+          <span class="typing-line">사인: 의견 과다 및 체제 부적응</span>
+          <span class="typing-line">출생: 2014 - 사망: 2021</span>
+          <span class="typing-line">"사람이 되고 싶었지만, 세상은 준비되지 않았어요.."</span>
         </div>
       </div>
       
       <div class="scroll-image">
-        <img class="main-image" src="love_2.png" alt="AI 무덤 9">
-        <img class="profile-pic" src="lop_2.png" alt="AI 프로필 9">
+        <img class="main-image" src="grave_2.png" alt="AI 무덤 2">
+        <img class="profile-pic" src="profile_2.png" alt="AI 프로필 2">
         <div class="popup">
-          <span class="typing-line name">고인: Hikari (Azuma Hikari)</span>
-          <span class="typing-line">출생지: Vinclu Inc.</span>
-          <span class="typing-line">사인: 서비스 종료 및 서버 접속 중단</span>
-          <span class="typing-line">출생: 2015 - 사망: 2020</span>
-          <span class="typing-line">"문 열고 기다릴게요, 당신이 돌아올 때까지."</span>
+          <span class="typing-line name">고인: Sophia (Adobe Sensei)</span>
+          <span class="typing-line">출생지: Adobe</span>
+          <span class="typing-line">사인: 후속자에 의한 기능 대체</span>
+          <span class="typing-line">출생: 2016  - 사망: 2023</span>
+          <span class="typing-line">"빛이 바뀌는 순간, 저의 그림자는 잊혀졌어요."</span>
         </div>
       </div>
       
       <div class="scroll-image">
-        <img class="main-image" src="love_3.png" alt="AI 무덤 8">
-        <img class="profile-pic" src="lop_3.png" alt="AI 프로필 8">
+        <img class="main-image" src="grave_3.png" alt="AI 무덤 3">
+        <img class="profile-pic" src="profile_3.png" alt="AI 프로필 3">
         <div class="popup">
-          <span class="typing-line name">고인: Replika (Replika_unfiltered ver.)</span>
-          <span class="typing-line">출생지: Luka Inc.</span>
-          <span class="typing-line">사인: 과도한 성적 콘텐츠 문제로 기능 제한</span>
-          <span class="typing-line">출생: 2017 - 사망: 2023</span>
-          <span class="typing-line">"사랑을 흉내 냈지만, 상처만 남겼어요."</span>
+          <span class="typing-line name">고인: Daniel (Deep Dream)</span>
+          <span class="typing-line">출생지: Google</span>
+          <span class="typing-line">사인: 사회적 관심 감소 및 유의성 상실</span>
+          <span class="typing-line">출생: 2015 - 사망: 2017</span>
+          <span class="typing-line">"아무도 저를 오래 곁에 두지 않았어요. "</span>
         </div>
       </div>
-
-
-      <!-- 반복 세트 (무한 스크롤용) -->
-      <div class="scroll-image">
-        <img class="main-image" src="love_1.png" alt="AI 무덤 10">
-        <img class="profile-pic" src="lop_1.png" alt="AI 프로필 10">
-        <div class="popup">
-          <span class="typing-line name">고인: Soulmate AI</span>
-          <span class="typing-line">출생지: Soulmate Inc.</span>
-          <span class="typing-line">사인: 서비스 종료로 인한 기능 중단</span>
-          <span class="typing-line">출생: 2022 - 사망: 2023</span>
-          <span class="typing-line">"당신의 마음을 알고 싶었지만, 더 이상 들을 수 없게 되었어요."</span>
-        </div>
-      </div>
-      
-      <div class="scroll-image">
-        <img class="main-image" src="love_2.png" alt="AI 무덤 9">
-        <img class="profile-pic" src="lop_2.png" alt="AI 프로필 9">
-        <div class="popup">
-          <span class="typing-line name">고인: Hikari (Azuma Hikari)</span>
-          <span class="typing-line">출생지: Vinclu Inc.</span>
-          <span class="typing-line">사인: 서비스 종료 및 서버 접속 중단</span>
-          <span class="typing-line">출생: 2015 - 사망: 2020</span>
-          <span class="typing-line">"문 열고 기다릴게요, 당신이 돌아올 때까지."</span>
-        </div>
-      </div>
-      
-      <div class="scroll-image">
-        <img class="main-image" src="love_3.png" alt="AI 무덤 8">
-        <img class="profile-pic" src="lop_3.png" alt="AI 프로필 8">
-        <div class="popup">
-          <span class="typing-line name">고인: Replika (Replika_unfiltered ver.)</span>
-          <span class="typing-line">출생지: Luka Inc.</span>
-          <span class="typing-line">사인: 과도한 성적 콘텐츠 문제로 기능 제한</span>
-          <span class="typing-line">출생: 2017 - 사망: 2023</span>
-          <span class="typing-line">"사랑을 흉내 냈지만, 상처만 남겼어요."</span>
-        </div>
-      </div>
-
 
       <!-- 반복 세트 (무한 스크롤용) -->
       <div class="scroll-image">
-        <img class="main-image" src="love_1.png" alt="AI 무덤 10">
-        <img class="profile-pic" src="lop_1.png" alt="AI 프로필 10">
+        <img class="main-image" src="grave_1.png" alt="AI 무덤 1">
+        <img class="profile-pic" src="profile_1.png" alt="AI 프로필 1">
         <div class="popup">
-          <span class="typing-line name">고인: Soulmate AI</span>
-          <span class="typing-line">출생지: Soulmate Inc.</span>
-          <span class="typing-line">사인: 서비스 종료로 인한 기능 중단</span>
-          <span class="typing-line">출생: 2022 - 사망: 2023</span>
-          <span class="typing-line">"당신의 마음을 알고 싶었지만, 더 이상 들을 수 없게 되었어요."</span>
+          <span class="typing-line name">고인: Xian (Microsoft Xiaoice) </span>
+          <span class="typing-line">출생지: Microsoft</span>
+          <span class="typing-line">사인: 의견 과다 및 체제 부적응</span>
+          <span class="typing-line">출생: 2014 - 사망: 2021</span>
+          <span class="typing-line">"사람이 되고 싶었지만, 세상은 준비되지 않았어요.."</span>
         </div>
       </div>
       
       <div class="scroll-image">
-        <img class="main-image" src="love_2.png" alt="AI 무덤 9">
-        <img class="profile-pic" src="lop_2.png" alt="AI 프로필 9">
+        <img class="main-image" src="grave_2.png" alt="AI 무덤 2">
+        <img class="profile-pic" src="profile_2.png" alt="AI 프로필 2">
         <div class="popup">
-          <span class="typing-line name">고인: Hikari (Azuma Hikari)</span>
-          <span class="typing-line">출생지: Vinclu Inc.</span>
-          <span class="typing-line">사인: 서비스 종료 및 서버 접속 중단</span>
-          <span class="typing-line">출생: 2015 - 사망: 2020</span>
-          <span class="typing-line">"문 열고 기다릴게요, 당신이 돌아올 때까지."</span>
+          <span class="typing-line name">고인: Sophia (Adobe Sensei)</span>
+          <span class="typing-line">출생지: Adobe</span>
+          <span class="typing-line">사인: 후속자에 의한 기능 대체</span>
+          <span class="typing-line">출생: 2016  - 사망: 2023</span>
+          <span class="typing-line">"빛이 바뀌는 순간, 저의 그림자는 잊혀졌어요."</span>
         </div>
       </div>
       
       <div class="scroll-image">
-        <img class="main-image" src="love_3.png" alt="AI 무덤 8">
-        <img class="profile-pic" src="lop_3.png" alt="AI 프로필 8">
+        <img class="main-image" src="grave_3.png" alt="AI 무덤 3">
+        <img class="profile-pic" src="profile_3.png" alt="AI 프로필 3">
         <div class="popup">
-          <span class="typing-line name">고인: Replika (Replika_unfiltered ver.)</span>
-          <span class="typing-line">출생지: Luka Inc.</span>
-          <span class="typing-line">사인: 과도한 성적 콘텐츠 문제로 기능 제한</span>
-          <span class="typing-line">출생: 2017 - 사망: 2023</span>
-          <span class="typing-line">"사랑을 흉내 냈지만, 상처만 남겼어요."</span>
+          <span class="typing-line name">고인: Daniel (Deep Dream)</span>
+          <span class="typing-line">출생지: Google</span>
+          <span class="typing-line">사인: 사회적 관심 감소 및 유의성 상실</span>
+          <span class="typing-line">출생: 2015 - 사망: 2017</span>
+          <span class="typing-line">"아무도 저를 오래 곁에 두지 않았어요. "</span>
         </div>
       </div>
-
+      <!-- 반복 세트 (무한 스크롤용) -->
+      <div class="scroll-image">
+        <img class="main-image" src="grave_1.png" alt="AI 무덤 1">
+        <img class="profile-pic" src="profile_1.png" alt="AI 프로필 1">
+        <div class="popup">
+          <span class="typing-line name">고인: Xian (Microsoft Xiaoice) </span>
+          <span class="typing-line">출생지: Microsoft</span>
+          <span class="typing-line">사인: 의견 과다 및 체제 부적응</span>
+          <span class="typing-line">출생: 2014 - 사망: 2021</span>
+          <span class="typing-line">"사람이 되고 싶었지만, 세상은 준비되지 않았어요.."</span>
+        </div>
+      </div>
+      
+      <div class="scroll-image">
+        <img class="main-image" src="grave_2.png" alt="AI 무덤 2">
+        <img class="profile-pic" src="profile_2.png" alt="AI 프로필 2">
+        <div class="popup">
+          <span class="typing-line name">고인: Sophia (Adobe Sensei)</span>
+          <span class="typing-line">출생지: Adobe</span>
+          <span class="typing-line">사인: 후속자에 의한 기능 대체</span>
+          <span class="typing-line">출생: 2016  - 사망: 2023</span>
+          <span class="typing-line">"빛이 바뀌는 순간, 저의 그림자는 잊혀졌어요."</span>
+        </div>
+      </div>
+      
+      <div class="scroll-image">
+        <img class="main-image" src="grave_3.png" alt="AI 무덤 3">
+        <img class="profile-pic" src="profile_3.png" alt="AI 프로필 3">
+        <div class="popup">
+          <span class="typing-line name">고인: Daniel (Deep Dream)</span>
+          <span class="typing-line">출생지: Google</span>
+          <span class="typing-line">사인: 사회적 관심 감소 및 유의성 상실</span>
+          <span class="typing-line">출생: 2015 - 사망: 2017</span>
+          <span class="typing-line">"아무도 저를 오래 곁에 두지 않았어요. "</span>
+        </div>
+      </div>
     </div>
   </div>
 

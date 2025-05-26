@@ -107,33 +107,94 @@
         }
 
         .petal {
-            position: absolute;
-            width: 8px;
-            height: 12px;
-            background: radial-gradient(ellipse, #ffffff 0%, #ffffff 70%, rgba(255, 255, 255, 0.8) 100%);
-            border-radius: 50% 20% 50% 20%;
-            transform-origin: 50% 100%;
-            box-shadow: 0 0 3px rgba(255, 255, 255, 0.4);
-        }
+    position: absolute;
+    width: 12px;
+    height: 18px;
+    background: linear-gradient(
+        45deg, 
+        rgba(255, 255, 255, 0.9) 0%, 
+        rgba(255, 255, 255, 1) 30%, 
+        rgba(248, 248, 255, 0.95) 70%, 
+        rgba(240, 240, 255, 0.8) 100%
+    );
+    border-radius: 70% 30% 70% 30%;
+    transform-origin: 50% 90%;
+    box-shadow: 
+        0 0 8px rgba(255, 255, 255, 0.6),
+        inset 0 0 4px rgba(255, 255, 255, 0.3),
+        0 2px 4px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.7);
+}
 
-        .petal:nth-child(1) { transform: rotate(0deg) translateY(-6px); }
-        .petal:nth-child(2) { transform: rotate(60deg) translateY(-6px); }
-        .petal:nth-child(3) { transform: rotate(120deg) translateY(-6px); }
-        .petal:nth-child(4) { transform: rotate(180deg) translateY(-6px); }
-        .petal:nth-child(5) { transform: rotate(240deg) translateY(-6px); }
-        .petal:nth-child(6) { transform: rotate(300deg) translateY(-6px); }
+.petal:nth-child(1) { 
+    transform: rotate(0deg) translateY(-8px); 
+    animation: petalSway1 4s ease-in-out infinite;
+}
+.petal:nth-child(2) { 
+    transform: rotate(60deg) translateY(-8px); 
+    animation: petalSway2 4s ease-in-out infinite;
+}
+.petal:nth-child(3) { 
+    transform: rotate(120deg) translateY(-8px); 
+    animation: petalSway3 4s ease-in-out infinite;
+}
+.petal:nth-child(4) { 
+    transform: rotate(180deg) translateY(-8px); 
+    animation: petalSway4 4s ease-in-out infinite;
+}
+.petal:nth-child(5) { 
+    transform: rotate(240deg) translateY(-8px); 
+    animation: petalSway5 4s ease-in-out infinite;
+}
+.petal:nth-child(6) { 
+    transform: rotate(300deg) translateY(-8px); 
+    animation: petalSway6 4s ease-in-out infinite;
+}
 
-        .flower-center {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 4px;
-            height: 4px;
-            background: #ffe135;
-            border-radius: 50%;
-            box-shadow: 0 0 6px rgba(255, 225, 53, 0.6);
-        }
+/* 꽃잎 흔들림 애니메이션 추가 */
+@keyframes petalSway1 {
+    0%, 100% { transform: rotate(0deg) translateY(-8px) scale(1); }
+    50% { transform: rotate(3deg) translateY(-9px) scale(1.05); }
+}
+@keyframes petalSway2 {
+    0%, 100% { transform: rotate(60deg) translateY(-8px) scale(1); }
+    50% { transform: rotate(63deg) translateY(-9px) scale(1.05); }
+}
+@keyframes petalSway3 {
+    0%, 100% { transform: rotate(120deg) translateY(-8px) scale(1); }
+    50% { transform: rotate(123deg) translateY(-9px) scale(1.05); }
+}
+@keyframes petalSway4 {
+    0%, 100% { transform: rotate(180deg) translateY(-8px) scale(1); }
+    50% { transform: rotate(183deg) translateY(-9px) scale(1.05); }
+}
+@keyframes petalSway5 {
+    0%, 100% { transform: rotate(240deg) translateY(-8px) scale(1); }
+    50% { transform: rotate(243deg) translateY(-9px) scale(1.05); }
+}
+@keyframes petalSway6 {
+    0%, 100% { transform: rotate(300deg) translateY(-8px) scale(1); }
+    50% { transform: rotate(303deg) translateY(-9px) scale(1.05); }
+}
+.flower-center {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 6px;
+    height: 6px;
+    background: radial-gradient(
+        circle, 
+        #ffffff 0%, 
+        #ffffff 50%, 
+        #ffffff 100%
+    );
+    border-radius: 50%;
+    box-shadow: 
+        0 0 8px rgba(255, 235, 59, 0),
+        inset 0 0 3px rgba(255, 193, 7, 0);
+    border: 1px solid rgba(255, 152, 0, 0);
+}
 
         @keyframes flowerAppear {
             0% { 
@@ -372,6 +433,70 @@
                 padding: 15px;
             }
         }
+
+        
+
+        .control-button {
+            padding: 8px 15px;
+            background: rgba(0, 0, 0, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 6px;
+            color: #ffffff;
+            font-family: 'Courier New', monospace;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .control-button:hover {
+            background: rgba(255, 255, 255, 0.1);
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+        }
+
+       
+     
+
+        /* 다음 버튼 */
+        .next-button {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            z-index: 100;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .next-button:hover {
+            transform: scale(1.1) translateY(-2px);
+            background: rgba(255, 255, 255, 0.2);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.3), 0 0 20px rgba(255, 255, 255, 0.2);
+        }
+
+        .next-arrow {
+            width: 0;
+            height: 0;
+            border-top: 12px solid transparent;
+            border-bottom: 12px solid transparent;
+            border-left: 18px solid rgba(255, 255, 255, 0.8);
+            transition: all 0.3s ease;
+            transform: translateX(2px);
+        }
+
+        .next-button:hover .next-arrow {
+            border-left-color: rgba(255, 255, 255, 1);
+            transform: translateX(4px);
+        }
     </style>
 </head>
 <body>
@@ -382,8 +507,8 @@
     </div>
 
     <div id="data-controls">
-        <button class="control-button" onclick="exportMessages()">내보내기</button>
-        <button class="control-button" onclick="clearAllMessages()">전체 삭제</button>
+        <button class="control-button" onclick="exportMessages()">Export</button>
+        <button class="control-button" onclick="clearAllMessages()">Delete</button>
     </div>
 
     <div id="memorial-section">
@@ -397,6 +522,13 @@
             <button type="submit" id="submit-button">남기기</button>
         </form>
     </div>
+    <div class="back-button" onclick="goBack()">
+        <div class="back-arrow"></div>
+    </div>
+    
+    <div class="next-button" onclick="goNext()">
+        <div class="next-arrow"></div>
+    </div>
 
     <script>
         // 캔버스 및 컨텍스트 설정
@@ -409,6 +541,23 @@
             canvas.height = window.innerHeight;
         }
         resizeCanvas();
+
+        function goBack() {
+    // 뒤로가기 기능 구현
+    console.log('뒤로가기 버튼 클릭됨');
+    // 예: window.history.back();
+    // 또는 특정 페이지로 이동: window.location.href = 'previous-page.html';
+}
+
+function goNext() {
+    // 페이드 아웃 효과와 함께 이동
+    document.body.style.transition = 'opacity 0.5s ease-out';
+    document.body.style.opacity = '0';
+    
+    setTimeout(() => {
+        window.location.href = 'index.html';
+    }, 500);
+}
         
         // 마우스 위치 추적
         let mouse = {
@@ -719,22 +868,73 @@
         }
         
         // AI 텍스트 형태로 입자 생성
-        function createDummyImageData() {
-            const tempCanvas = document.createElement('canvas');
-            const tempCtx = tempCanvas.getContext('2d');
-            const size = Math.min(300, Math.min(canvas.width, canvas.height) * 0.4);
-            tempCanvas.width = size;
-            tempCanvas.height = size;
+        function createImageData() {
+    return new Promise((resolve, reject) => {
+        const tempCanvas = document.createElement('canvas');
+        const tempCtx = tempCanvas.getContext('2d');
+        const img = new Image();
+        
+        img.onload = function() {
+            // 이미지 크기 설정 (화면 크기에 맞게 조정)
+            const maxSize = Math.min(800, Math.min(canvas.width, canvas.height) * 0.5);
+            const aspectRatio = img.width / img.height;
             
-            // AI 글자 형태로 패턴 생성
-            tempCtx.fillStyle = '#ffffff';
-            tempCtx.font = `bold ${size * 0.3}px monospace`;
-            tempCtx.textAlign = 'center';
-            tempCtx.textBaseline = 'middle';
-            tempCtx.fillText('AI', size/2, size/2);
+            let width, height;
+            if (aspectRatio > 1) {
+                width = maxSize;
+                height = maxSize / aspectRatio;
+            } else {
+                height = maxSize;
+                width = maxSize * aspectRatio;
+            }
             
-            return tempCtx.getImageData(0, 0, size, size);
-        }
+            tempCanvas.width = width;
+            tempCanvas.height = height;
+            
+            // 이미지를 캔버스에 그리기
+            tempCtx.drawImage(img, 0, 0, width, height);
+            
+            try {
+                const imageData = tempCtx.getImageData(0, 0, width, height);
+                resolve(imageData);
+            } catch (error) {
+                console.error('이미지 데이터 추출 실패:', error);
+                // 오류 시 기본 AI 텍스트로 폴백
+                resolve(createDummyImageData());
+            }
+        };
+        
+        img.onerror = function() {
+            console.error('이미지 로드 실패, 기본 AI 텍스트 사용');
+            // 오류 시 기본 AI 텍스트로 폴백
+            resolve(createDummyImageData());
+        };
+        
+        // 여기에 이미지 파일 경로를 입력하세요
+        // 예: img.src = 'your-image.png';
+        // 또는 상대 경로: img.src = './images/memorial-image.png';
+        img.src = 'ai_main.png'; // 이 부분을 실제 이미지 경로로 변경
+    });
+}
+
+// 기존 AI 텍스트 생성 함수는 폴백용으로 유지
+function createDummyImageData() {
+    const tempCanvas = document.createElement('canvas');
+    const tempCtx = tempCanvas.getContext('2d');
+    const size = Math.min(300, Math.min(canvas.width, canvas.height) * 0.4);
+    tempCanvas.width = size;
+    tempCanvas.height = size;
+    
+    tempCtx.fillStyle = '#ffffff';
+    tempCtx.font = `bold ${size * 0.3}px monospace`;
+    tempCtx.textAlign = 'center';
+    tempCtx.textBaseline = 'middle';
+    tempCtx.fillText('AI', size/2, size/2);
+    
+    return tempCtx.getImageData(0, 0, size, size);
+}
+            
+            
         
         // 거리 계산 함수
         function getDistanceFromCenter(x, y, centerX, centerY, maxDistance) {
@@ -745,68 +945,69 @@
         }
         
         // 입자 초기화
-        function init() {
-            particleArray = [];
-            
-            try {
-                const imageData = createDummyImageData();
-                const newWidth = imageData.width;
-                const newHeight = imageData.height;
-                const data = imageData.data;
+        async function init() {
+    particleArray = [];
+    
+    try {
+        // 이미지 데이터를 비동기로 로드
+        const imageData = await createImageData();
+        const newWidth = imageData.width;
+        const newHeight = imageData.height;
+        const data = imageData.data;
+        
+        const offsetX = (canvas.width - newWidth) / 2;
+        const offsetY = (canvas.height - newHeight) / 2;
+        
+        const centerX = newWidth / 2;
+        const centerY = newHeight / 2;
+        const maxDistance = Math.sqrt(centerX * centerX + centerY * centerY);
+        
+        const PARTICLE_GAP = 3; // 더 조밀한 입자
+        const EDGE_DISTANCE = 0.03;
+        
+        for (let y = 0; y < newHeight; y += PARTICLE_GAP) {
+            for (let x = 0; x < newWidth; x += PARTICLE_GAP) {
+                const pixelIndex = (y * newWidth + x) * 4;
                 
-                const offsetX = (canvas.width - newWidth) / 2;
-                const offsetY = (canvas.height - newHeight) / 2;
-                
-                const centerX = newWidth / 2;
-                const centerY = newHeight / 2;
-                const maxDistance = Math.sqrt(centerX * centerX + centerY * centerY);
-                
-                const PARTICLE_GAP = 4;
-                const EDGE_DISTANCE = 0.03;
-                
-                for (let y = 0; y < newHeight; y += PARTICLE_GAP) {
-                    for (let x = 0; x < newWidth; x += PARTICLE_GAP) {
-                        const pixelIndex = (y * newWidth + x) * 4;
+                if (pixelIndex < data.length) {
+                    const r = data[pixelIndex];
+                    const g = data[pixelIndex + 1];
+                    const b = data[pixelIndex + 2];
+                    const a = data[pixelIndex + 3];
+                    
+                    const distanceFromCenter = getDistanceFromCenter(x, y, centerX, centerY, maxDistance);
+                    
+                    const skipChance = distanceFromCenter > EDGE_DISTANCE ? 
+                                    (distanceFromCenter - EDGE_DISTANCE) * 1.2 : 0;
+                    
+                    if (a > 50 && Math.random() > skipChance) { // 투명도 임계값 낮춤
+                        // 원본 색상 사용 (흑백 변환하지 않음)
+                        const [h, s, l] = rgbToHsl(r, g, b);
+const grayValue = Math.round(l * 255);
+const color = `rgba(${grayValue}, ${grayValue}, ${grayValue}, ${(a / 255) * 0.8})`;
                         
-                        if (pixelIndex < data.length) {
-                            const r = data[pixelIndex];
-                            const g = data[pixelIndex + 1];
-                            const b = data[pixelIndex + 2];
-                            const a = data[pixelIndex + 3];
-                            
-                            const distanceFromCenter = getDistanceFromCenter(x, y, centerX, centerY, maxDistance);
-                            
-                            const skipChance = distanceFromCenter > EDGE_DISTANCE ? 
-                                            (distanceFromCenter - EDGE_DISTANCE) * 1.5 : 0;
-                            
-                            if (a > 128 && Math.random() > skipChance) {
-                                const [h, s, l] = rgbToHsl(r, g, b);
-                                const grayValue = Math.round(l * 255);
-                                const color = `rgba(${grayValue}, ${grayValue}, ${grayValue}, ${a / 255 * 0.8})`;
-                                
-                                particleArray.push(new Particle(
-                                    x + offsetX, 
-                                    y + offsetY, 
-                                    color, 
-                                    1.5, 
-                                    distanceFromCenter
-                                ));
-                            }
-                        }
+                        particleArray.push(new Particle(
+                            x + offsetX, 
+                            y + offsetY, 
+                            color, 
+                            1.5, // 입자 크기 약간 증가
+                            distanceFromCenter
+                        ));
                     }
                 }
-                
-                if (particleArray.length > 8000) {
-                    particleArray = particleArray.filter(() => Math.random() > 0.3);
-                }
-                
-                console.log(`생성된 입자 수: ${particleArray.length}`);
-                
-           
-            } catch (error) {
-                console.error('초기화 오류:', error);
             }
         }
+        
+        if (particleArray.length > 10000) {
+            particleArray = particleArray.filter(() => Math.random() > 0.2);
+        }
+        
+        console.log(`생성된 입자 수: ${particleArray.length}`);
+        
+    } catch (error) {
+        console.error('초기화 오류:', error);
+    }
+}
         
         // 애니메이션 루프
         function animate() {
@@ -913,11 +1114,26 @@
         
         // 엔터키로 메시지 제출 (Shift+Enter는 줄바꿈)
         document.getElementById('message-input').addEventListener('keydown', function(e) {
-            if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault();
-                document.getElementById('message-form').dispatchEvent(new Event('submit'));
+    if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        e.stopPropagation(); // 이벤트 버블링 방지
+        
+        // 직접 제출 로직 호출 (이벤트 중복 방지)
+        if (!isSubmitting) {
+            const content = this.value.trim();
+            if (content) {
+                isSubmitting = true;
+                saveMessage(content);
+                this.value = '';
+                this.focus();
+                
+                setTimeout(() => {
+                    isSubmitting = false;
+                }, 500);
             }
-        });
+        }
+    }
+});
         
         // 페이지 언로드 시 정리
         window.addEventListener('beforeunload', function() {
