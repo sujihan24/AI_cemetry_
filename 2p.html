@@ -19,7 +19,7 @@
         }
         
         .scroll-container {
-            height: 300vh;
+            height: 400vh;
             position: relative;
         }
         
@@ -79,7 +79,7 @@
     margin-top: 1rem;
     padding: 0.75rem 1.5rem;
     background: linear-gradient(45deg, #000000, #000000);
-    border: 1px solid #ffffff;  /* 얇은 흰색 테두리 추가 */
+    border: 1.2px solid #ffffff;  /* 얇은 흰색 테두리 추가 */
     border-radius: 50px;
     color: white;
     font-weight: bold;
@@ -161,6 +161,27 @@
     font-size: 1rem;  /* 필요시 크기도 조절 */
         }
 
+        .scroll-indicator {
+    position: fixed;
+    top: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: rgba(255, 255, 255, 0.4);
+    font-family: 'Courier New', monospace;
+    font-size: 1.4rem;
+    font-weight: 100;
+    letter-spacing: 3px;
+    z-index: 10;
+    animation: fadeInOut 2s ease-in-out infinite;
+    pointer-events: none;
+    user-select: none;
+}
+
+@keyframes fadeInOut {
+    0%, 100% { opacity: 0.2; }
+    50% { opacity: 0.7; }
+}
+
         
 
     </style>
@@ -195,7 +216,7 @@
     
     <div class="tombstone-info" data-index="2">
         <h2>Romantic AI</h2>
-        <p>사랑을 흉내냈지만, 윤리의 벽과 집착의 그림자 속에서 결국 오류로 기록되다//</p>
+        <p>사랑을 흉내냈지만, 윤리의 벽과 집착의 그림자 속에서 결국 오류로 기록되다..</p>
         <button class="go-button" data-link="scroll_3.html">▶ Go</button>
     </div>
     
@@ -1307,4 +1328,5 @@ document.addEventListener('DOMContentLoaded', function() {
 })
 </script>
 </body>
+<div class="scroll-indicator">Scroll Down</div>
 </html>
